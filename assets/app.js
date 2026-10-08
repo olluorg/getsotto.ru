@@ -85,6 +85,17 @@
       entries.forEach(function (en) { if (en.isIntersecting && !seen) { seen = true; goal("pricing_view"); } });
     }, { threshold: 0.4 }).observe(plans);
   }
+  // Плашка про cookie — до первого «Понятно».
+  var cookie = document.querySelector(".cookie");
+  if (cookie) {
+    var seen = false;
+    try { seen = localStorage.getItem("cookie-ok") === "1"; } catch (e) {}
+    if (!seen) cookie.hidden = false;
+    cookie.querySelector("button").addEventListener("click", function () {
+      cookie.hidden = true;
+      try { localStorage.setItem("cookie-ok", "1"); } catch (e) {}
+    });
+  }
   document.querySelectorAll("a[href='#access']").forEach(function (a) {
     a.addEventListener("click", function () { goal("cta_click", { where: a.dataset.where || "" }); });
   });
