@@ -161,6 +161,11 @@ section { padding: 96px 0; position: relative; }
 .plan ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; color: var(--muted); font-size: 15px; flex: 1; }
 .plan li::before { content: "✓"; color: var(--teal); margin-right: 8px; font-weight: 800; }
 .note { color: var(--faint); font-size: 14px; margin-top: 22px; text-align: center; }
+.note b { color: var(--text); }
+/* Оплата за разговор — вторым рядом под пакетами часов, уже и по центру. */
+.passes-head { margin: 56px 0 24px; }
+.passes-head h3 { font-size: 24px; margin: 0; }
+.plans.passes { grid-template-columns: repeat(2, 1fr); max-width: 640px; margin: 0 auto; }
 .beta { display: flex; gap: 14px; align-items: center; background: rgba(90, 209, 192, .08); border: 1px solid rgba(90, 209, 192, .28);
         border-radius: 14px; padding: 14px 18px; margin-bottom: 28px; color: #c9f1ea; font-size: 15.5px; }
 .beta b { color: #fff; }
@@ -219,7 +224,7 @@ footer a { color: var(--muted); }
   .wrap { padding: 0 16px; }
   section { padding: 64px 0; }
   .hero { padding-top: 56px; }
-  .plans { grid-template-columns: 1fr; }
+  .plans, .plans.passes { grid-template-columns: 1fr; }
   .fact { padding: 16px; }
   .fact b { font-size: 24px; }
   .fact span { font-size: 13.5px; }

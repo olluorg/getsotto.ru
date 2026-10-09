@@ -22,10 +22,37 @@
     else utm = JSON.parse(localStorage.getItem("sotto.utm") || "{}");
   } catch (e) {}
 
+  // Компьютер посетителя — по браузеру. С телефона не угадать, там остаётся
+  // Windows: человек поправит сам.
+  var OS_NAMES = { windows: "Windows", mac: "Mac", linux: "Linux" };
+  function guessOs() {
+    var ua = "";
+    try { ua = ((navigator.userAgentData && navigator.userAgentData.platform) || "") + " " + (navigator.userAgent || ""); } catch (e) {}
+    if (/android|iphone|ipad/i.test(ua)) return "windows";
+    if (/mac/i.test(ua)) return "mac";
+    if (/linux|x11|cros/i.test(ua)) return "linux";
+    return "windows";
+  }
+
   // ---- заявка ----
   document.querySelectorAll("form[data-lead]").forEach(function (form) {
     var status = form.querySelector(".form-status");
     var button = form.querySelector("button[type=submit]");
+    // Не Windows — обещаем не установщик, а весть о версии для своей системы.
+    var card = form.closest(".card") || document;
+    var osField = form.querySelector("select[name=os]");
+    function showOs() {
+      var os = osField ? osField.value : "windows";
+      card.querySelectorAll("[data-os]").forEach(function (li) {
+        li.hidden = (li.dataset.os === "windows") !== (os === "windows");
+      });
+      card.querySelectorAll("[data-os-name]").forEach(function (n) { n.textContent = OS_NAMES[os] || "Mac"; });
+    }
+    if (osField) {
+      osField.value = guessOs();
+      osField.addEventListener("change", showOs);
+      showOs();
+    }
     var started = false;
     form.addEventListener("input", function () {
       if (!started) { started = true; goal("lead_start"); }
@@ -39,6 +66,7 @@
         name: String(data.get("name") || "").trim(),
         scenario: String(data.get("scenario") || ""),
         comment: String(data.get("comment") || "").trim(),
+        os: String(data.get("os") || ""),
         page: location.pathname,
         utm: utm,
         consent: !!data.get("consent")
@@ -55,9 +83,12 @@
       }).then(function (r) {
         if (!r.ok) throw new Error(String(r.status));
         status.className = "form-status ok";
-        status.textContent = "Спасибо! Пришлём промокод и ссылку на программу в течение дня.";
+        status.textContent = body.os === "windows" || !body.os
+          ? "Спасибо! Пришлём промокод и ссылку на программу в течение дня."
+          : "Спасибо! Записали, что вы на " + OS_NAMES[body.os] + ": напишем первыми, когда появится версия.";
         form.reset();
-        goal("lead", { scenario: body.scenario });
+        if (osField) { osField.value = body.os || guessOs(); showOs(); }
+        goal("lead", { scenario: body.scenario, os: body.os });
       }).catch(function () {
         status.className = "form-status bad";
         status.textContent = "Не отправилось. Напишите нам: " + (cfg.contact || "почта в подвале страницы") + ".";
