@@ -201,6 +201,9 @@ footer a { color: var(--muted); }
 .doc { max-width: 820px; }
 .doc h2 { margin: 36px 0 12px; font-size: 24px; }
 .doc p, .doc li { color: var(--muted); margin-bottom: 10px; }
+.edition { color: var(--muted); font-size: 14px; margin: 8px 0 24px; }
+.doc ul { padding-left: 22px; margin: 0 0 12px; }
+.doc b { color: var(--text); }
 .draft { background: rgba(255, 179, 138, .1); border: 1px solid rgba(255, 179, 138, .35); color: #ffd9c4; border-radius: 12px; padding: 14px 18px; margin: 20px 0; }
 
 /* ---- узкие экраны ---- */
