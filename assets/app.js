@@ -22,6 +22,23 @@
     else utm = JSON.parse(localStorage.getItem("sotto.utm") || "{}");
   } catch (e) {}
 
+  // Партнёрская ссылка (?ref=код): код помним и передаём в кабинет — там
+  // новый аккаунт закрепится за пригласившим. В заявке — меткой utm_ref.
+  var ref = "";
+  try {
+    var r = new URLSearchParams(location.search).get("ref");
+    if (r && /^[a-z0-9]{4,16}$/i.test(r)) localStorage.setItem("sotto.ref", r.toLowerCase());
+    ref = localStorage.getItem("sotto.ref") || "";
+  } catch (e) {}
+  if (ref) {
+    utm.utm_ref = ref;
+    document.querySelectorAll("a[href^='https://my.getsotto.ru']").forEach(function (a) {
+      var u = new URL(a.href);
+      u.searchParams.set("ref", ref);
+      a.href = u.toString();
+    });
+  }
+
   // Компьютер посетителя — по браузеру. С телефона не угадать, там остаётся
   // Windows: человек поправит сам.
   var OS_NAMES = { windows: "Windows", mac: "Mac", linux: "Linux" };
@@ -127,6 +144,9 @@
       try { localStorage.setItem("cookie-ok", "1"); } catch (e) {}
     });
   }
+  document.querySelectorAll("a[href*='/download/']").forEach(function (a) {
+    a.addEventListener("click", function () { goal("download", { where: a.dataset.where || "" }); });
+  });
   document.querySelectorAll("a[href='#access']").forEach(function (a) {
     a.addEventListener("click", function () { goal("cta_click", { where: a.dataset.where || "" }); });
   });

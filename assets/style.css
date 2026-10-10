@@ -57,6 +57,8 @@ section { padding: 96px 0; position: relative; }
 .nav { display: flex; gap: 22px; margin-left: auto; font-size: 15px; }
 .nav a { color: var(--muted); }
 .nav a:hover, .nav a.on { color: var(--text); text-decoration: none; }
+.signin { color: var(--muted); font-size: 15px; white-space: nowrap; }
+.signin:hover { color: var(--text); text-decoration: none; }
 
 /* ---- кнопки ---- */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 50px; padding: 0 24px;
@@ -218,6 +220,7 @@ footer a { color: var(--muted); }
   .split, .card, footer .wrap { grid-template-columns: 1fr; gap: 32px; }
   .split.flip > :first-child { order: 0; }
   .nav { display: none; }
+  .signin { margin-left: auto; }
   .top .btn { margin-left: auto; }
 }
 @media (max-width: 560px) {
