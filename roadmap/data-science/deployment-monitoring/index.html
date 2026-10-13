@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Внедрение и мониторинг моделей — карта «Data Scientist»</title>
+<meta name="description" content="Пакетное и онлайн-предсказание, дрейф данных, мониторинг качества и переобучение.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/data-science/deployment-monitoring/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/roadmap/data-science/deployment-monitoring/">
+<meta property="og:title" content="Внедрение и мониторинг моделей — карта «Data Scientist»">
+<meta property="og:description" content="Пакетное и онлайн-предсказание, дрейф данных, мониторинг качества и переобучение.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/roadmap/" class=on>Карты</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/data-science/#mlops">Data Scientist</a> <span>/</span> <a href="/roadmap/data-science/mlops/">Модели в продакшене</a> <span>/</span> <span>Внедрение и мониторинг моделей</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Data Scientist","item":"https://getsotto.ru/roadmap/data-science/#mlops"},{"@type":"ListItem","position":3,"name":"Модели в продакшене","item":"https://getsotto.ru/roadmap/data-science/mlops/"},{"@type":"ListItem","position":4,"name":"Внедрение и мониторинг моделей"}]}</script>
+  <h1>Внедрение и мониторинг моделей</h1>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-middle">с Middle</span></div>
+  <p class="lead">Пакетное и онлайн-предсказание, дрейф данных, мониторинг качества и переобучение.</p>
+  <article class="md"><h3>Что важно знать</h3>
+<ul><li>Пакетное предсказание проще и часто достаточно.</li><li>Онлайн: задержка, совпадение признаков при обучении и в работе.</li><li>Дрейф данных и концепта; метки приходят с задержкой.</li><li>Новая модель — через сравнение с текущей на трафике.</li></ul></article>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Middle <small>≈ 10 ч</small></h3><ul><li>Внедряет модель пакетным расчётом или сервисом на FastAPI в Docker</li><li>Отслеживает дрейф признаков и качество модели с учётом задержки разметки</li></ul><p class="rm-practice"><b>Практика.</b> Развернуть модель сервисом на FastAPI в Docker и настроить отчёт о дрейфе признаков.</p></div><div class="rm-grade"><h3>Senior <small>≈ 6 ч</small></h3><ul><li>Проектирует жизненный цикл модели — переобучение, A/B-проверку новой версии, откат</li></ul><p class="rm-practice"><b>Практика.</b> Описать и реализовать процесс выкатки новой версии модели через теневой режим и A/B-тест.</p></div></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/ai/mlops-lifecycle/">Что такое MLOps и как модель попадает в продакшен?</a> <span class="lvl lvl-middle">Middle</span><p>MLOps — практики, чтобы модели воспроизводимо обучались, проверялись, выкатывались и наблюдались. Цикл: данные → эксперименты (с трекингом параметров и метрик) → регистрация…</p></li><li><a href="/questions/ai/model-drift/">Что такое дрейф данных и концепта и как его отслеживать?</a> <span class="lvl lvl-middle">Middle</span><p>Data drift — меняется распределение входных признаков (пришли новые пользователи, изменился продукт). Concept drift — меняется сама зависимость «признаки → ответ» (мошенники…</p></li><li><a href="/questions/ai/ab-testing-models/">Почему хорошая офлайн-метрика модели не гарантирует успех в продакшене и как проверить модель онлайн?</a> <span class="lvl lvl-middle">Middle</span><p>Офлайн-метрика (ROC-AUC, RMSE) считается на исторических данных и не равна бизнес-цели: модель меняет поведение пользователей, данные могли устареть, есть утечки и…</p></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/common/docker/">← Docker</a><a class="next" href="/roadmap/data-science/ml-system-design/">ML system design →</a></nav>
+  <p class="rm-back"><a href="/roadmap/data-science/#mlops">← Вся карта «Data Scientist»</a></p>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Внедрение и мониторинг моделей","description":"Пакетное и онлайн-предсказание, дрейф данных, мониторинг качества и переобучение.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/data-science/deployment-monitoring/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>
