@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ArrayList: динамический массив изнутри — разбор для собеседования</title>
+<meta name="description" content="Бэкенд-массив, рост в 1.5×, амортизированная O(1), стоимость вставки/удаления и когда массив лучше.">
+<link rel="canonical" href="https://getsotto.ru/learn/java/arraylist/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/java/arraylist/">
+<meta property="og:title" content="ArrayList: динамический массив изнутри — разбор для собеседования">
+<meta property="og:description" content="Бэкенд-массив, рост в 1.5×, амортизированная O(1), стоимость вставки/удаления и когда массив лучше.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#java">Java</a> <span>/</span> <span>ArrayList: динамический массив изнутри</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/learn/#java"},{"@type":"ListItem","position":3,"name":"ArrayList: динамический массив изнутри"}]}</script>
+  <h1>ArrayList: динамический массив изнутри</h1>
+  <p class="lead">Бэкенд-массив, рост в 1.5×, амортизированная O(1), стоимость вставки/удаления и когда массив лучше.</p>
+  <article class="md"><h2>Что внутри</h2>
+<p>ArrayList — это обёртка над обычным массивом <code>Object[]</code> <code>elementData</code> плюс поле size (число занятых элементов). Важно различать size (сколько элементов) и capacity (длина внутреннего массива): capacity ≥ size.</p>
+<p>Доступ <code>get(i)</code>/<code>set(i)</code> — это просто индексирование массива, поэтому O(1) и с отличной cache locality: элементы лежат подряд в памяти, что дружит с процессорным кэшем и префетчем.</p>
+<h2>Рост массива</h2>
+<p>Когда при add массива не хватает, вызывается <code>grow()</code>: новая ёмкость = старая + (старая &gt;&gt; 1), то есть рост примерно в 1.5×, после чего старые элементы копируются в новый массив через <code>System.arraycopy</code>.</p>
+<p>Коэффициент 1.5 — компромисс: больше (например 2×) реже копирует, но сильнее перерасходует память; 1.5 даёт хороший баланс и возможность переиспользовать освобождённые блоки памяти.</p>
+<pre class="lang-java"><code>// HotSpot OpenJDK, упрощённо:
+int newCapacity = oldCapacity + (oldCapacity &gt;&gt; 1); // ~1.5x
+elementData = Arrays.copyOf(elementData, newCapacity);</code></pre>
+<figure><img src="/learn/assets/arraylist-growth.webp" alt="Рост динамического массива в три шага: заполненный массив из N ячеек → выделение нового массива в 1.5 раза длиннее → копирование элементов из старого в новый." loading="lazy"><figcaption>При переполнении ArrayList выделяет массив в ~1.5 раза больше и копирует туда все элементы.</figcaption></figure>
+<h2>Почему add амортизированно O(1)</h2>
+<p>Отдельное копирование при росте стоит O(n), но происходит редко: между расширениями добавляется пропорционально текущему размеру элементов. Суммарная стоимость N добавлений — O(N), значит на одно добавление в среднем O(1) — это и есть амортизированная оценка.</p>
+<p>Если финальный размер известен заранее, стоит задать начальную ёмкость <code>new ArrayList&lt;&gt;(expectedSize)</code> или вызвать <code>ensureCapacity</code> — это исключает серию перекопирований.</p>
+<div class="widget-in"><script type="module" src="/widgets/arraylist-growth.js"></script><sotto-arraylist-growth theme="dark"></sotto-arraylist-growth></div>
+<h2>Вставка и удаление в середину</h2>
+<p><code>add(index, e)</code> и <code>remove(index)</code> сдвигают «хвост» массива через <code>System.arraycopy</code>, поэтому стоят O(n). Это плата за непрерывное хранение: чтобы вставить в середину, всё правее нужно подвинуть.</p>
+<p>Удаление последнего элемента — O(1). Для массового удаления по условию используют <code>removeIf</code> — он делает один проход вместо многократного сдвига.</p>
+<h2>Нюансы</h2>
+<p>ArrayList не потокобезопасен, итератор fail-fast (через <code>modCount</code>). После большого роста и последующего сжатия данных память не возвращается автоматически — есть <code>trimToSize()</code>.</p>
+<p><code>subList</code> возвращает view на исходный список, а не копию: структурное изменение оригинала ломает view. Это частый источник тонких багов.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Объясните различие size/capacity, рост в 1.5× и амортизированную O(1) (через суммарную стоимость), назовите O(n) на вставку в середину из-за arraycopy и упомяните задание начальной ёмкости как оптимизацию. Это сразу показывает понимание, а не зубрёжку.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/java/arraylist-vs-linkedlist/">Чем ArrayList отличается от LinkedList и что брать по умолчанию?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/java/arraylist-amortized-add/">Почему добавление в конец ArrayList считается амортизированно O(1), хотя иногда требует копирования всего массива?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/jc-152/">Сколько стоит удаление элемента из середины ArrayList и почему?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/jc-153/">Что верно про управление ёмкостью ArrayList?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/arraylist-internals/">Что лежит в основе ArrayList?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/java/collections-overview/">Collections Framework: карта и выбор структуры</a><p>Иерархия интерфейсов, сложности операций основных структур, неизменяемые коллекции и принцип выбора по паттерну доступа.</p></li><li><a href="/learn/java/linkedlist/">LinkedList и миф о дешёвой вставке</a><p>Двусвязные узлы, реальная стоимость операций, cache locality и почему ArrayList/ArrayDeque почти всегда лучше.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"ArrayList: динамический массив изнутри","description":"Бэкенд-массив, рост в 1.5×, амортизированная O(1), стоимость вставки/удаления и когда массив лучше.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/java/arraylist/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

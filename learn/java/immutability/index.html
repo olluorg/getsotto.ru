@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Проектирование неизменяемых классов — разбор для собеседования</title>
+<meta name="description" content="Зачем нужна неизменяемость, рецепт immutable-класса, защитные копии, безопасная публикация и records.">
+<link rel="canonical" href="https://getsotto.ru/learn/java/immutability/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/java/immutability/">
+<meta property="og:title" content="Проектирование неизменяемых классов — разбор для собеседования">
+<meta property="og:description" content="Зачем нужна неизменяемость, рецепт immutable-класса, защитные копии, безопасная публикация и records.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#java">Java</a> <span>/</span> <span>Проектирование неизменяемых классов</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/learn/#java"},{"@type":"ListItem","position":3,"name":"Проектирование неизменяемых классов"}]}</script>
+  <h1>Проектирование неизменяемых классов</h1>
+  <p class="lead">Зачем нужна неизменяемость, рецепт immutable-класса, защитные копии, безопасная публикация и records.</p>
+  <article class="md"><h2>Что даёт неизменяемость</h2>
+<p>Неизменяемый (immutable) объект — тот, чьё наблюдаемое состояние не меняется после создания. Это не самоцель, а мощный инструмент простоты и безопасности.</p>
+<p>Плюсы: потокобезопасность без всякой синхронизации (нечего портить гонкой), безопасность как ключей Map и элементов Set (хеш не «уедет»), свободное кэширование и шаринг одного экземпляра, и просто более лёгкие рассуждения о коде — значение нельзя поменять «из-под ног». Поэтому общий совет — делать классы неизменяемыми по умолчанию, а изменяемость вводить только при необходимости.</p>
+<h2>Рецепт immutable-класса</h2>
+<p>Чтобы класс был по-настоящему неизменяемым: (1) не давать сеттеров и иных мутаторов; (2) все поля сделать private final; (3) запретить наследование (класс final или приватный конструктор + фабрики), иначе подкласс может добавить изменяемость; (4) если поля ссылаются на изменяемые объекты — делать защитные копии на входе и выходе; (5) не давать ссылке this утечь из конструктора (см. безопасную публикацию).</p>
+<p>Пункты 1–3 очевидны, а 4 — самый забываемый и важный.</p>
+<h2>Защитные копии</h2>
+<p>Если конструктор просто сохранит переданную ссылку на изменяемый объект (List, массив, Date), вызывающий сохранит свою копию ссылки и сможет поменять «внутренности» вашего объекта снаружи — неизменяемость иллюзорна. Поэтому изменяемые входные данные копируют в конструкторе, а в геттере возвращают копию или неизменяемое представление.</p>
+<p>Это и есть defensive copy — базовый приём дизайна immutable-классов и защиты инвариантов вообще.</p>
+<pre class="lang-java"><code>final class Period {
+    private final List&lt;Event&gt; events;
+    Period(List&lt;Event&gt; events) {
+        this.events = List.copyOf(events);   // копия на входе — снаружи не подменят
+    }
+    List&lt;Event&gt; events() { return events; } // уже неизменяемый список
+}</code></pre>
+<h2>Безопасная публикация</h2>
+<p>Неизменяемость и многопоточность связаны напрямую: объект, у которого ВСЕ поля final и ссылка this не утекла из конструктора, по модели памяти Java безопасно публикуется — любой поток, получивший ссылку на готовый объект, увидит его поля корректно установленными без синхронизации (final field freeze).</p>
+<p>Именно поэтому «immutable ⇒ потокобезопасен». Подробно про этот механизм — в уроке про JMM.</p>
+<h2>Стоимость и приёмы</h2>
+<p>Цена неизменяемости — копирование при «изменении»: вместо мутации создают новый объект (методы <code>withX</code>, возвращающие копию с одним изменённым полем). Для редких изменений это дёшево; для частых — используют изменяемый Builder, который собирает состояние, а на выходе отдаёт неизменяемый результат, или специализированные persistent-структуры.</p>
+<p>Главное — не превращать «<code>withX</code> на каждый чих» в источник мусора в горячем цикле; там уместен мутабельный буфер с финальной заморозкой.</p>
+<h2>records</h2>
+<p>Современный лаконичный способ объявить неизменяемый носитель данных — record (см. урок про современную Java): он автоматически делает компоненты private final, генерирует конструктор, геттеры, equals/<code>hashCode</code> и <code>toString</code>.</p>
+<p>Важная оговорка: record гарантирует неизменяемость только своих ССЫЛОК, но не делает защитных копий за вас. Если компонент — изменяемый List, его всё равно нужно копировать в компактном конструкторе, иначе «неизменяемая» запись протекает.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Назовите выгоды (потокобезопасность, безопасные ключи, кэшируемость) и рецепт (final-класс, private final поля, без сеттеров, защитные копии, не публиковать this). Подчеркните defensive copy на входе/выходе как самый забываемый пункт, свяжите immutable с безопасной публикацией (все поля final → потокобезопасен) и оговорите, что record не делает защитных копий сам.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/java/immutable-class-recipe/">Что требуется, чтобы класс был ПО-НАСТОЯЩЕМУ неизменяемым?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/immutability-benefits/">Что даёт неизменяемость (immutability) объекта?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/java/defensive-copy/">Конструктор сохранил переданный List по ссылке (this.items = items). Почему объект всё равно изменяем?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/immutable-thread-safety/">Почему про immutable-объект говорят «потокобезопасен без синхронизации»?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/immutable-modification-cost/">Как в immutable-дизайне моделируют «изменение» и снижают его цену?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/record-defensive-copy/">Чего record НЕ делает за вас при проектировании неизменяемого носителя данных?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/java/equality/">Равенство: ==, equals и hashCode</a><p>Идентичность против логического равенства, контракт equals и hashCode, проблема equals с наследованием и корректная реализация.</p></li><li><a href="/learn/java/initialization/">final, static и порядок инициализации</a><p>Семантика final (и почему это не immutable), static-члены, порядок инициализации класса и объекта, константы и ловушки.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Проектирование неизменяемых классов","description":"Зачем нужна неизменяемость, рецепт immutable-класса, защитные копии, безопасная публикация и records.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/java/immutability/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

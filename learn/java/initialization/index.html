@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>final, static и порядок инициализации — разбор для собеседования</title>
+<meta name="description" content="Семантика final (и почему это не immutable), static-члены, порядок инициализации класса и объекта, константы и ловушки.">
+<link rel="canonical" href="https://getsotto.ru/learn/java/initialization/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/java/initialization/">
+<meta property="og:title" content="final, static и порядок инициализации — разбор для собеседования">
+<meta property="og:description" content="Семантика final (и почему это не immutable), static-члены, порядок инициализации класса и объекта, константы и ловушки.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#java">Java</a> <span>/</span> <span>final, static и порядок инициализации</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/learn/#java"},{"@type":"ListItem","position":3,"name":"final, static и порядок инициализации"}]}</script>
+  <h1>final, static и порядок инициализации</h1>
+  <p class="lead">Семантика final (и почему это не immutable), static-члены, порядок инициализации класса и объекта, константы и ловушки.</p>
+  <article class="md"><h2>final</h2>
+<p>final у переменной запрещает переприсваивание (для поля — это blank final, которое надо инициализировать ровно один раз в объявлении или конструкторе), у метода запрещает переопределение, у класса — наследование.</p>
+<p>Важно: final ≠ immutable. <code>final List&lt;String&gt;</code> нельзя переприсвоить, но сам список можно менять. Неизменяемость объекта — это отдельное свойство, обеспечиваемое инкапсуляцией.</p>
+<h2>Безопасная публикация и final-поля</h2>
+<p>Публикация объекта — это передача ссылки на него туда, где его увидит другой код или поток: запись в общее поле, добавление в коллекцию, возврат из метода. В многопоточной программе тут есть тонкость: из-за кэшей процессора и переупорядочивания записей другой поток может увидеть ССЫЛКУ на объект раньше, чем ему станут видны записи полей этого объекта в конструкторе. Тогда он наблюдает «полупостроенный» объект с полями по умолчанию (null/0) — это и есть небезопасная публикация.</p>
+<p>Для final-полей JMM даёт специальную гарантию (final field freeze): значения final-полей, записанные в конструкторе, гарантированно видны любому потоку, который получит ссылку на полностью построенный объект, — без всякой синхронизации. Поэтому неизменяемый объект (все поля final, и ссылка this не утекла наружу из конструктора) можно безопасно публиковать и делить между потоками просто так. Это и есть фундамент тезиса «immutable-объекты потокобезопасны».</p>
+<p>Для НЕ-final полей такой гарантии нет: их безопасно публикуют через volatile-поле, запись под synchronized, потокобезопасную коллекцию или иное happens-before-ребро. Подробно про happens-before и видимость — в уроке «Java Memory Model».</p>
+<h2>static</h2>
+<p>static-члены принадлежат классу, а не экземпляру: одно поле на все объекты, метод вызывается без экземпляра. static-блок выполняется при инициализации класса.</p>
+<p>Оправданное применение — утилиты без состояния и константы. Изменяемое static-поле — это глобальное изменяемое состояние со всеми его бедами (гонки, скрытые связи, сложность тестирования), поэтому его избегают.</p>
+<h2>Порядок инициализации</h2>
+<p>При первой активной загрузке класса один раз выполняются static-поля и static-блоки — в порядке их объявления в коде.</p>
+<p>При создании объекта порядок такой: сначала отрабатывает конструктор суперкласса (<code>super(...)</code>), затем инициализаторы полей и instance-блоки в порядке объявления, и только потом — тело конструктора. Понимание этого порядка объясняет многие тонкие баги инициализации.</p>
+<pre class="lang-java"><code>class A {
+    static int s = init(&quot;static A&quot;);   // 1) при загрузке класса
+    int i = init(&quot;field A&quot;);            // 3) при new, после super
+    A() { log(&quot;ctor A&quot;); }              // 4) тело конструктора
+}</code></pre>
+<h2>Константы времени компиляции</h2>
+<p>static final поле примитивного типа или String, инициализированное константным выражением, — это compile-time constant: компилятор подставляет его ЗНАЧЕНИЕ прямо в место использования (inlining).</p>
+<p>Практическое следствие: если изменить такую константу в библиотеке, но не перекомпилировать клиентов, они продолжат использовать старое зашитое значение. Это нюанс версионирования API, о котором забывают.</p>
+<h2>Ловушки инициализации</h2>
+<p>Вызов переопределяемого метода из конструктора опасен: к моменту вызова поля подкласса ещё не инициализированы (конструктор подкласса не дошёл до своего тела), и метод увидит значения по умолчанию (null/0).</p>
+<p>Другие грабли: циклические зависимости при инициализации классов (forward reference к ещё не готовому static) и публикация this из конструктора (передача недостроенного объекта наружу/в другой поток).</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Различите final для переменной/метода/класса и подчеркните final ≠ immutable (+ safe publication). Точно изложите порядок инициализации (static один раз при загрузке; для объекта: super → поля/блоки → конструктор), назовите инлайнинг compile-time констант и ловушку вызова переопределяемого метода из конструктора.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/java/final-reference/">Что означает final для переменной-ссылки?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/java/final-modifier/">Что верно про модификатор final в Java?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/java/initialization-order/">В каком порядке выполняется инициализация при создании объекта подкласса?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/compile-time-constant-inlining/">Библиотека объявляет public static final String VERSION = &quot;1.0&quot;. В новой версии значение изменили на &quot;2.0&quot; и заменили только jar библиотеки. Что увидит уже скомпилированное приложение?</a> <span class="lvl lvl-senior">Senior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/java/jmm/">Java Memory Model: happens-before и volatile</a><p>Зачем нужна модель памяти, видимость и переупорядочивание, отношение happens-before, семантика volatile и final, гонки данных.</p></li><li><a href="/learn/java/oop/">ООП и его принципы</a><p>Инкапсуляция, наследование, полиморфизм, абстракция — зачем они нужны, как работают внутри и почему композицию предпочитают наследованию.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"final, static и порядок инициализации","description":"Семантика final (и почему это не immutable), static-члены, порядок инициализации класса и объекта, константы и ловушки.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/java/initialization/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

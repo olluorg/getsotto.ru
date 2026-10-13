@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Координация: семафоры, защёлки и барьеры — разбор для собеседования</title>
+<meta name="description" content="Semaphore, CountDownLatch, CyclicBarrier, Phaser и Exchanger — что каждый делает и когда выбирать.">
+<link rel="canonical" href="https://getsotto.ru/learn/java/coordination/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/java/coordination/">
+<meta property="og:title" content="Координация: семафоры, защёлки и барьеры — разбор для собеседования">
+<meta property="og:description" content="Semaphore, CountDownLatch, CyclicBarrier, Phaser и Exchanger — что каждый делает и когда выбирать.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#java">Java</a> <span>/</span> <span>Координация: семафоры, защёлки и барьеры</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/learn/#java"},{"@type":"ListItem","position":3,"name":"Координация: семафоры, защёлки и барьеры"}]}</script>
+  <h1>Координация: семафоры, защёлки и барьеры</h1>
+  <p class="lead">Semaphore, CountDownLatch, CyclicBarrier, Phaser и Exchanger — что каждый делает и когда выбирать.</p>
+  <article class="md"><h2>Зачем готовые примитивы</h2>
+<p>Координацию можно собрать на wait/notify, но это легко сделать неправильно (потерянные сигналы, гонки). Пакет <code>java.util.concurrent</code> даёт проверенные высокоуровневые примитивы под типовые задачи — их и используют вместо ручной синхронизации.</p>
+<p>Под капотом большинство построено на AbstractQueuedSynchronizer (AQS) — общем каркасе для очередей ожидающих потоков.</p>
+<h2>Semaphore</h2>
+<p>Semaphore хранит набор «пермитов»: <code>acquire()</code> забирает один (блокируясь, если их нет), <code>release()</code> возвращает. Это ограничитель одновременного доступа: семафор с N пермитами пускает не более N потоков сразу — например, ограничить число параллельных обращений к внешнему сервису или пул соединений.</p>
+<p>Семафор с одним пермитом работает как (не реентерабельная!) блокировка. Поддерживает <code>tryAcquire</code> с таймаутом и режим fairness. Важно: release не обязан вызывать тот же поток, что acquire — это не владение, а счётчик разрешений.</p>
+<pre class="lang-java"><code>Semaphore limit = new Semaphore(10); // не более 10 одновременно
+limit.acquire();
+try { callExternalService(); }
+finally { limit.release(); }</code></pre>
+<h2>CountDownLatch</h2>
+<p>CountDownLatch — одноразовый шлюз с счётчиком: потоки ждут на <code>await()</code>, пока счётчик не дойдёт до нуля через <code>countDown()</code>. Два классических применения: дождаться, пока N задач завершатся (главный поток ждёт), или одновременно стартовать N потоков по одному сигналу (защёлка на 1).</p>
+<p>Ключевое ограничение — одноразовость: после достижения нуля защёлку нельзя переиспользовать.</p>
+<h2>CyclicBarrier</h2>
+<p>CyclicBarrier — точка встречи фиксированной группы потоков: каждый вызывает <code>await()</code> и блокируется, пока ВСЕ участники не подойдут, после чего они одновременно продолжают. В отличие от latch, барьер переиспользуем (циклический) и подходит для итеративных/фазовых вычислений.</p>
+<p>Можно задать barrier action — код, который выполнится один раз при срабатывании барьера. Если один поток уходит по таймауту/прерыванию, барьер «ломается» (BrokenBarrierException) для всех.</p>
+<h2>Phaser и Exchanger</h2>
+<p>Phaser — гибкий барьер с динамическим числом участников (register/<code>arriveAndDeregister</code>) и явными фазами: подходит, когда количество потоков меняется между этапами, чего CyclicBarrier с фиксированным N не умеет. Exchanger — точка обмена данными между ровно двумя потоками: оба вызывают <code>exchange(value)</code> и получают значение друг друга.</p>
+<p>Шпаргалка выбора: ограничить одновременный доступ — Semaphore; дождаться завершения событий (одноразово) — CountDownLatch; циклическая встреча фиксированной группы — CyclicBarrier; динамические фазы — Phaser; парный обмен — Exchanger.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Чётко противопоставьте примитивы: Semaphore (N пермитов, ограничение доступа, release не привязан к потоку), CountDownLatch (одноразовый, дождаться N), CyclicBarrier (переиспользуемый рандеву группы + barrier action), Phaser (динамические участники/фазы), Exchanger (обмен между двумя). Упомяните, что многие построены на AQS.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/java/latch-barrier-semaphore/">Чем различаются CountDownLatch, CyclicBarrier и Semaphore?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/semaphore-rate-limit/">Нужно ограничить число одновременных обращений к внешнему API десятью, не ограничивая при этом число рабочих потоков. Какой примитив подходит?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/countdownlatch-reuse/">Можно ли переиспользовать CountDownLatch после того, как счётчик дошёл до нуля?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/semaphore-release-finally/">В коде вызывается semaphore.acquire(), затем работа с ресурсом, затем semaphore.release() в конце метода. Что здесь опасно?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/countdownlatch/">Что делает CountDownLatch?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/java/locks/">Явные блокировки: ReentrantLock, RW и Condition</a><p>Когда synchronized мало, ReentrantLock с tryLock/fairness, ReadWriteLock и StampedLock, Condition вместо wait/notify.</p></li><li><a href="/learn/java/completablefuture/">Future и CompletableFuture</a><p>Ограничения Future, асинхронная композиция CompletableFuture, async-варианты с пулами и обработка ошибок.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Координация: семафоры, защёлки и барьеры","description":"Semaphore, CountDownLatch, CyclicBarrier, Phaser и Exchanger — что каждый делает и когда выбирать.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/java/coordination/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

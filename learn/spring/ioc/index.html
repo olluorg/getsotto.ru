@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IoC и Dependency Injection — разбор для собеседования</title>
+<meta name="description" content="Принцип инверсии управления, DI как его форма, три способа внедрения и почему конструктор, разрешение циклических зависимостей.">
+<link rel="canonical" href="https://getsotto.ru/learn/spring/ioc/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/spring/ioc/">
+<meta property="og:title" content="IoC и Dependency Injection — разбор для собеседования">
+<meta property="og:description" content="Принцип инверсии управления, DI как его форма, три способа внедрения и почему конструктор, разрешение циклических зависимостей.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#spring">Spring</a> <span>/</span> <span>IoC и Dependency Injection</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Spring","item":"https://getsotto.ru/learn/#spring"},{"@type":"ListItem","position":3,"name":"IoC и Dependency Injection"}]}</script>
+  <h1>IoC и Dependency Injection</h1>
+  <p class="lead">Принцип инверсии управления, DI как его форма, три способа внедрения и почему конструктор, разрешение циклических зависимостей.</p>
+  <article class="md"><h2>Inversion of Control</h2>
+<p>Inversion of Control (инверсия управления) — принцип: контроль над созданием, конфигурацией и жизненным циклом объектов передаётся внешнему контейнеру, а не пишется руками в коде. Это «Hollywood principle»: не вы зовёте фреймворк, а он зовёт ваш код.</p>
+<p>В Spring роль контейнера играет ApplicationContext: он создаёт объекты-бины, связывает их зависимости и управляет их жизнью. Ваш код перестаёт делать new для своих зависимостей.</p>
+<h2>Dependency Injection</h2>
+<p>DI — конкретная форма IoC: зависимости объекта передаются ему извне (контейнером), а не создаются им самим внутри через new. Объект лишь объявляет, что ему нужно, а кто и как это предоставит — забота контейнера.</p>
+<p>Важно не путать понятия: IoC — широкий принцип (управление отдано наружу), DI — один из способов его реализовать (через внедрение зависимостей). На собеседовании это частый уточняющий вопрос.</p>
+<h2>Три способа внедрения</h2>
+<p>Constructor injection — зависимости приходят параметрами конструктора (рекомендуемый). Setter injection — через сеттеры (для опциональных или переустанавливаемых зависимостей). Field injection — прямо в поле через <code>@Autowired</code> (не рекомендуется).</p>
+<p>С единственным конструктором аннотация <code>@Autowired</code> не нужна — Spring использует его автоматически.</p>
+<pre class="lang-java"><code>@Service
+class OrderService {
+    private final PaymentGateway gateway; // final — гарантированно установлен
+    OrderService(PaymentGateway gateway) { // один конструктор — @Autowired не нужен
+        this.gateway = gateway;
+    }
+}</code></pre>
+<h2>Почему конструктор</h2>
+<p>Конструкторная инъекция объективно лучше, а не просто «стиль». Поля можно сделать final (иммутабельность и безопасная публикация). Объект всегда создаётся полностью собранным — не бывает промежуточного состояния с null-зависимостями. Обязательные зависимости становятся явными: класс невозможно создать без них (fail-fast уже на старте контекста, а не NPE в рантайме).</p>
+<p>И главное для качества кода — тестируемость: класс с конструкторной инъекцией тестируется обычным new с моками, без поднятия Spring-контекста. Field injection, наоборот, прячет зависимости (по сигнатуре не видно, что нужно классу) и требует рефлексии/контейнера в тестах.</p>
+<h2>Циклические зависимости</h2>
+<p>Если A зависит от B, а B — от A через конструкторы, контейнер не может их собрать (для создания A нужен готовый B и наоборот) и бросает BeanCurrentlyInCreationException на старте.</p>
+<p>Цикл «лечат» setter/field-инъекцией или <code>@Lazy</code>/ObjectProvider, которые откладывают получение зависимости. Но это симптом: чаще всего циклическая зависимость — признак плохого дизайна, и правильный путь — рефакторинг (выделить третий компонент с общей логикой), а не обход. С Spring Boot 2.6+ циклы по умолчанию запрещены, что подталкивает именно к рефакторингу.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Чётко разделите IoC (принцип: управление отдано контейнеру) и DI (форма IoC: внедрение зависимостей). Перечислите три вида инъекции и аргументируйте конструктор по существу (final, полностью собранный объект, явные обязательные зависимости, fail-fast, тестируемость без контекста). Объясните, почему конструкторный цикл неразрешим и что это повод к рефакторингу, а не к обходу.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/spring/ioc-vs-di/">Как соотносятся IoC и DI в Spring?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/spring/constructor-injection/">Какие преимущества у constructor injection по сравнению с field injection? Выберите все верные.</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/spring/qualifier-primary/">Как разрешить неоднозначность, когда для внедрения подходят несколько бинов одного типа?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/inject-all-implementations/">Как внедрить сразу все реализации интерфейса и выбирать нужную в рантайме?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/spring/bean/">Бины: жизненный цикл и scopes</a><p>Бин и BeanDefinition, полный жизненный цикл, роль BeanPostProcessor, области видимости и их ловушки.</p></li><li><a href="/learn/spring/context-config/">ApplicationContext и конфигурация</a><p>BeanFactory против ApplicationContext, способы конфигурации, @Configuration full/lite, профили и Environment, @Conditional.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"IoC и Dependency Injection","description":"Принцип инверсии управления, DI как его форма, три способа внедрения и почему конструктор, разрешение циклических зависимостей.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/spring/ioc/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

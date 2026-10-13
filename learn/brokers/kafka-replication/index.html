@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kafka replication и отказоустойчивость — разбор для собеседования</title>
+<meta name="description" content="Leader/followers, ISR и lag, связка acks/min.insync, high watermark и видимость для consumer, выборы лидера и unclean election, rack awareness.">
+<link rel="canonical" href="https://getsotto.ru/learn/brokers/kafka-replication/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/brokers/kafka-replication/">
+<meta property="og:title" content="Kafka replication и отказоустойчивость — разбор для собеседования">
+<meta property="og:description" content="Leader/followers, ISR и lag, связка acks/min.insync, high watermark и видимость для consumer, выборы лидера и unclean election, rack awareness.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#brokers">Брокеры сообщений</a> <span>/</span> <span>Kafka replication и отказоустойчивость</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Брокеры сообщений","item":"https://getsotto.ru/learn/#brokers"},{"@type":"ListItem","position":3,"name":"Kafka replication и отказоустойчивость"}]}</script>
+  <h1>Kafka replication и отказоустойчивость</h1>
+  <p class="lead">Leader/followers, ISR и lag, связка acks/min.insync, high watermark и видимость для consumer, выборы лидера и unclean election, rack awareness.</p>
+  <article class="md"><h2>Leader и followers</h2>
+<p>У каждой партиции один leader и несколько followers. Все чтения и записи идут через leader; followers непрерывно подтягивают данные с него и держат у себя точную копию лога.</p>
+<p>Сколько копий держать — задаёт <code>replication.factor</code> (типично 3). Реплики размещают на РАЗНЫХ брокерах, а в облаке — желательно ещё и в разных зонах/стойках через <code>broker.rack</code>, чтобы пережить падение целого узла или AZ.</p>
+<figure><img src="/learn/assets/kafka-replication.webp" alt="Реплика-лидер на одном брокере и реплики-фолловеры на других; продюсер пишет лидеру, синхронные реплики образуют ISR, отстающая — вне ISR." loading="lazy"><figcaption>Продюсер пишет только лидеру; синхронные фолловеры входят в ISR, отстающие выпадают из него.</figcaption></figure>
+<h2>ISR (in-sync replicas)</h2>
+<p>ISR — подмножество реплик, которые «успевают» за leader (отстают не дольше <code>replica.lag.time.max.ms</code>). Только реплики из ISR имеют право стать новым лидером при failover — поэтому ISR определяет фактическую отказоустойчивость партиции.</p>
+<p>Если follower отстаёт сильнее лимита, его выбрасывают из ISR. Постоянно скачущая ISR — признак проблем (медленная сеть/диски, перекос нагрузки) и тревожный сигнал в мониторинге.</p>
+<h2>Acks и min.insync.replicas</h2>
+<p>Это вторая половина истории про долговечность, начатой в уроке про producer. acks=all требует подтверждения от всех реплик ISR, а <code>min.insync.replicas</code> задаёт МИНИМАЛЬНОЕ число синхронных реплик, при котором запись вообще принимается.</p>
+<p>Боевая комбинация — RF=3, <code>min.insync.replicas</code>=2, acks=all: переживаем падение одной реплики без потерь и без блокировки записи. Если ISR схлопывается ниже <code>min.insync</code>, продюсер получает NotEnoughReplicasException — это лучше, чем тихо потерять данные.</p>
+<h2>High watermark и видимость</h2>
+<p>Записи, реплицированные на все ISR-реплики, считаются «закоммиченными». Граница закоммиченных данных — high watermark (HW). Consumer'ы видят только записи ДО HW, даже если на leader уже лежат более свежие байты.</p>
+<p>Это и обеспечивает корректность при failover: если новый лидер ещё не имел этих незакоммиченных данных, они «не существовали» с точки зрения consumer'ов — и не возникает ситуации «сообщение пропало после переключения». Видимость для приложений всегда консервативна по сравнению с физическим логом.</p>
+<h2>Выборы лидера и unclean election</h2>
+<p>При падении leader controller (нода с координацией метаданных) выбирает нового лидера ИЗ ISR. Если в ISR не осталось живых реплик, по умолчанию партиция уходит в offline — запись и чтение блокируются до восстановления.</p>
+<p>Флаг <code>unclean.leader.election.enable</code>=true разрешает взять лидером реплику ВНЕ ISR. Доступность восстановится, но эта реплика отстала, и часть подтверждённых записей будет потеряна. Для критичных данных (платежи, события домена) почти всегда оставляют false: лучше временный простой записи, чем потеря committed-сообщений.</p>
+<h2>Rack awareness и сохранность</h2>
+<p><code>broker.rack</code> помечает физическое размещение брокера (стойка/AZ). Kafka использует это для rack-aware размещения реплик: не складывает все реплики партиции в один rack, а распределяет по разным — падение целой стойки/AZ не лишает партицию доступного лидера.</p>
+<p>Это «бесплатная» отказоустойчивость, но требует, чтобы топология брокеров действительно отражала физическую/облачную топологию — иначе rack awareness становится пустой меткой.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Опишите leader/followers и RF=3 как боевой дефолт. Главное — ISR (только in-sync реплики имеют право стать лидером) и связка acks=all + <code>min.insync.replicas</code>=2 для долговечности. Объясните high watermark (consumer видит только закоммиченное → нет «исчезающих» сообщений при failover) и опасность <code>unclean.leader.election.enable</code>=true (доступность ценой подтверждённых данных). Завершите <code>broker.rack</code> для rack-aware размещения по AZ.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/brokers/kafka-isr/">Что такое ISR (in-sync replicas) в Kafka и какую роль он играет?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/min-insync-replicas/">Как min.insync.replicas работает вместе с acks=all?</a> <span class="lvl lvl-senior">Senior</span></li><li><a href="/questions/brokers/high-watermark/">Что такое high watermark в Kafka и как он связан с видимостью сообщений для consumer-а?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/unclean-leader-election/">Чем опасен unclean leader election (unclean.leader.election.enable=true) в Kafka?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/kafka-replication-basic/">Зачем партиции реплицируются между брокерами?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/brokers/kafka-producer/">Kafka Producer</a><p>Запись и сериализация, выбор партиции, батчинг и сжатие, acks и долговечность, идемпотентный producer и транзакции.</p></li><li><a href="/learn/brokers/kafka-ecosystem/">Kafka API и экосистема</a><p>Клиентские API, Kafka Connect и Debezium, Streams и stream-processing, ksqlDB, Schema Registry и MirrorMaker для multi-DC.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Kafka replication и отказоустойчивость","description":"Leader/followers, ISR и lag, связка acks/min.insync, high watermark и видимость для consumer, выборы лидера и unclean election, rack awareness.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/brokers/kafka-replication/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

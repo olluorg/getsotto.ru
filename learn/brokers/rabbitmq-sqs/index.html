@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RabbitMQ, SQS и классические очереди — разбор для собеседования</title>
+<meta name="description" content="Модель exchange/binding/queue, ack/nack и publisher confirms, prefetch, DLQ через DLX, отложенные сообщения, SQS Standard vs FIFO и visibility…">
+<link rel="canonical" href="https://getsotto.ru/learn/brokers/rabbitmq-sqs/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/brokers/rabbitmq-sqs/">
+<meta property="og:title" content="RabbitMQ, SQS и классические очереди — разбор для собеседования">
+<meta property="og:description" content="Модель exchange/binding/queue, ack/nack и publisher confirms, prefetch, DLQ через DLX, отложенные сообщения, SQS Standard vs FIFO и visibility…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#brokers">Брокеры сообщений</a> <span>/</span> <span>RabbitMQ, SQS и классические очереди</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Брокеры сообщений","item":"https://getsotto.ru/learn/#brokers"},{"@type":"ListItem","position":3,"name":"RabbitMQ, SQS и классические очереди"}]}</script>
+  <h1>RabbitMQ, SQS и классические очереди</h1>
+  <p class="lead">Модель exchange/binding/queue, ack/nack и publisher confirms, prefetch, DLQ через DLX, отложенные сообщения, SQS Standard vs FIFO и visibility timeout.</p>
+  <article class="md"><h2>Модель RabbitMQ: exchange → queue</h2>
+<p>В RabbitMQ продюсер пишет НЕ напрямую в очередь, а в EXCHANGE с routing key. Exchange по bindings распределяет сообщение по очередям. Это ключевое отличие от Kafka, где продюсер пишет в топик-партицию напрямую.</p>
+<p>Типы exchange: direct (точное совпадение routing key с binding), topic (шаблоны с точкой и подстановками * и #), fanout (рассылка во все привязанные очереди — pub/sub), headers (маршрутизация по заголовкам). Так одной моделью покрываются и точечная доставка, и широковещание, и фильтрация.</p>
+<figure><img src="/learn/assets/rabbitmq-topology.webp" alt="Топология RabbitMQ: producer → exchange, который по ключу маршрутизации через bindings направляет сообщение в одну или несколько очередей, откуда читают консьюмеры." loading="lazy"><figcaption>В RabbitMQ продюсер пишет в exchange; тот по ключу маршрутизации раскладывает сообщения по очередям через bindings.</figcaption></figure>
+<h2>Ack/nack и publisher confirms</h2>
+<p>Consumer подтверждает обработку через <code>basicAck</code>. При <code>basicNack</code>/<code>basicReject</code> сообщение либо возвращается в очередь (requeue=true), либо отправляется в DLQ через DLX (requeue=false). Manual ack — стандарт для прода; auto ack коммитит до обработки и опасен потерями.</p>
+<p>С другой стороны цепочки — publisher confirms: брокер асинхронно подтверждает producer'у приём сообщения в exchange. Без confirms producer не знает, дошло ли сообщение до брокера. Это аналог acks=all в Kafka для надёжной отправки.</p>
+<h2>Prefetch (QoS)</h2>
+<p>Prefetch (<code>channel.basicQos(N)</code>) ограничивает количество неподтверждённых сообщений, выданных consumer'у одновременно. Это защищает медленный обработчик от переполнения памяти и обеспечивает FAIRNESS: быстрый consumer не выгребает всё, оставляя медленным пустой канал.</p>
+<p>Слишком большой prefetch теряет fairness и увеличивает latency «забронированных, но не обработанных» сообщений (они стоят в локальной очереди consumer'а, пока тот переваривает предыдущие). Типичные значения — десятки сообщений, точное значение подбирают по нагрузке.</p>
+<h2>DLQ через DLX</h2>
+<p>Dead-lettering в RabbitMQ настраивается на уровне очереди через аргументы: x-dead-letter-exchange (куда переслать) и опционально x-dead-letter-routing-key. В DLQ автоматически уходят сообщения по трём причинам: rejected без requeue, истёк TTL сообщения, превышен max-length очереди.</p>
+<p>В DLQ сохраняются заголовки с причиной (x-death) — это позволяет дальше разобрать поток ошибок. Без алертинга и владельца DLQ — это просто скрытая потеря сообщений (см. урок DLQ/retries).</p>
+<h2>Отложенные сообщения</h2>
+<p>Из коробки RabbitMQ не умеет «отправить через N минут». Два подхода: установить плагин rabbitmq_delayed_message_exchange (готовый «delayed exchange») — самый простой путь.</p>
+<p>Альтернатива — паттерн TTL + DLX: сообщение шлют в очередь БЕЗ consumer'а с x-message-ttl=N, после истечения сообщение переезжает через DLX в боевую очередь. Менее очевидно, но работает без плагинов.</p>
+<h2>SQS: Standard vs FIFO</h2>
+<p>SQS — managed-очередь AWS, без exchange'ей: продюсер шлёт прямо в очередь. Standard-очередь — at-least-once с возможным переупорядочиванием и near-infinite throughput. FIFO-очередь даёт строгий порядок и exactly-once-обработку на уровне SQS (через MessageGroupId для порядка и MessageDeduplicationId для дедупликации в 5-минутном окне) ценой ограниченного throughput.</p>
+<p>Ключевое понятие — visibility timeout: после ReceiveMessage сообщение НЕ удаляется, а становится невидимым на N секунд. Если consumer не удалит его за это время (DeleteMessage), оно снова станет видимым — отсюда at-least-once и требование идемпотентности. Для отложки используют DelaySeconds на сообщении/очереди.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Главное отличие RabbitMQ от Kafka — модель: продюсер пишет в EXCHANGE, тот по bindings разбрасывает в очереди (типы exchange direct/topic/fanout/headers). Объясните manual ack/nack и publisher confirms как аналог acks=all. Подчеркните роль prefetch (fairness + защита памяти) и DLQ через DLX (с причинами в x-death). Для SQS различите Standard (at-least-once) и FIFO (MessageGroupId/DeduplicationId), и опишите visibility timeout как механизм at-least-once: не удалил вовремя → сообщение вернулось.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/brokers/rabbitmq-exchange-routing/">Что такое exchange и routing key в RabbitMQ?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/sqs-visibility-timeout/">Что означает visibility timeout в AWS SQS?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/rabbitmq-or-kafka-choice/">Что вы выберете для очереди фоновых задач, а что для шины событий между сервисами — RabbitMQ или Kafka?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/kafka-vs-rabbitmq/">Чем Kafka принципиально отличается от RabbitMQ?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/publisher-confirms/">Что дают publisher confirms в RabbitMQ?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/sqs-fifo-vs-standard/">Чем SQS FIFO-очередь отличается от Standard-очереди?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/rabbitmq-prefetch/">Зачем нужен prefetch (basic.qos) в RabbitMQ и что будет при слишком большом значении?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/rabbitmq-routing-basic/">Как в RabbitMQ сообщение попадает от издателя в очередь?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/brokers/messaging-basics/">Очереди, pub/sub и гарантии доставки</a><p>Зачем брокер сообщений, queue против pub/sub, три семантики доставки, роль идемпотентности и компромисс порядок/масштаб.</p></li><li><a href="/learn/brokers/dlq-retries/">Retries, DLQ и идемпотентность</a><p>Что повторять и почему не всё, backoff/jitter, non-blocking retry, дизайн DLQ и redrive, идемпотентность как фундамент.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"RabbitMQ, SQS и классические очереди","description":"Модель exchange/binding/queue, ack/nack и publisher confirms, prefetch, DLQ через DLX, отложенные сообщения, SQS Standard vs FIFO и visibility timeout.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/brokers/rabbitmq-sqs/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

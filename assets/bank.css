@@ -99,3 +99,13 @@ ol.links.prep li p { color: var(--faint); font-size: 14px; margin-top: 4px; }
   .short .main { font-size: 17px; }
   ol.links.prep li { padding-left: 44px; }
 }
+
+/* Статьи /learn/ */
+.article .md { font-size: 17px; line-height: 1.7; }
+.article .md h2 { font-size: 26px; color: var(--text); margin: 38px 0 12px; }
+.article .md h3 { font-size: 20px; color: var(--text); margin: 26px 0 10px; }
+.article .md figure { margin: 22px 0 26px; }
+.article .md figure img { display: block; width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line-2); background: #fff; }
+.article .md figcaption { color: var(--faint); font-size: 14px; margin-top: 8px; }
+.article .md .widget-in { margin: 22px 0 26px; }
+.links li p, .learn li p { color: var(--muted); font-size: 15px; margin: 4px 0 0; }

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collectors и свёртка — разбор для собеседования</title>
+<meta name="description" content="reduce против collect, базовые коллекторы и ловушка toMap, группировка и downstream-коллекторы, характеристики и параллельность.">
+<link rel="canonical" href="https://getsotto.ru/learn/java/collectors/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/java/collectors/">
+<meta property="og:title" content="Collectors и свёртка — разбор для собеседования">
+<meta property="og:description" content="reduce против collect, базовые коллекторы и ловушка toMap, группировка и downstream-коллекторы, характеристики и параллельность.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#java">Java</a> <span>/</span> <span>Collectors и свёртка</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/learn/#java"},{"@type":"ListItem","position":3,"name":"Collectors и свёртка"}]}</script>
+  <h1>Collectors и свёртка</h1>
+  <p class="lead">reduce против collect, базовые коллекторы и ловушка toMap, группировка и downstream-коллекторы, характеристики и параллельность.</p>
+  <article class="md"><h2>reduce против collect</h2>
+<p>Свёртка стрима бывает двух видов. reduce — неизменяемая свёртка: identity + ассоциативная функция объединения (1+2+3 → сумма). Она хороша для значений (числа, конкатенация коротких строк), но накапливать ею в коллекцию неэффективно — на каждом шаге создаётся новый контейнер.</p>
+<p>collect — изменяемая свёртка (mutable reduction): результат накапливается в один мутируемый контейнер (список, карта, StringBuilder) через Collector. Для построения коллекций используют именно collect.</p>
+<h2>Базовые коллекторы и ловушка toMap</h2>
+<p><code>Collectors.toList()</code>/<code>toSet()</code>/<code>toUnmodifiableList()</code> собирают в коллекцию; <code>joining(&quot;, &quot;)</code> — в строку с разделителем. <code>toMap(keyFn, valueFn)</code> собирает в Map.</p>
+<p>Ловушка <code>toMap</code>: если два элемента дают одинаковый ключ, бросается IllegalStateException (Duplicate key). Поэтому при возможных дубликатах ОБЯЗАТЕЛЬНО передают третий аргумент — функцию слияния (merge), решающую конфликт (например, (a, b) -&gt; a или сумму).</p>
+<pre class="lang-java"><code>Map&lt;String, Integer&gt; byName = users.stream()
+    .collect(Collectors.toMap(User::name, User::age,
+             (a, b) -&gt; a)); // merge: что делать при дубликате ключа</code></pre>
+<h2>Группировка</h2>
+<p><code>groupingBy(classifier)</code> превращает поток в <code>Map&lt;K, List&lt;V&gt;&gt;</code> — группы по ключу (заказы по пользователю, слова по длине). <code>partitioningBy(predicate)</code> — частный случай: разбивает на два ведра по булеву условию (<code>Map&lt;Boolean, List&lt;V&gt;&gt;</code>), всегда содержит оба ключа.</p>
+<p>Это декларативная замена ручному циклу с <code>computeIfAbsent</code>.</p>
+<pre class="lang-java"><code>Map&lt;Department, List&lt;Employee&gt;&gt; byDept =
+    employees.stream().collect(Collectors.groupingBy(Employee::department));</code></pre>
+<h2>Downstream-коллекторы</h2>
+<p>Сила <code>groupingBy</code> — во втором аргументе, downstream-коллекторе, который сворачивает каждую группу дальше: <code>counting()</code> (размер группы), mapping(fn, <code>toList()</code>) (преобразовать элементы группы), <code>summingInt</code>/<code>averagingInt</code> (агрегаты), <code>toSet()</code>, <code>maxBy</code>/<code>minBy</code>.</p>
+<p>Так одной строкой строят «количество сотрудников по отделам» или «средняя зарплата по отделам» — вложенная свёртка.</p>
+<pre class="lang-java"><code>Map&lt;Department, Long&gt; headcount = employees.stream()
+    .collect(Collectors.groupingBy(Employee::department, Collectors.counting()));</code></pre>
+<h2>Характеристики и параллельность</h2>
+<p>У коллектора есть характеристики (CONCURRENT, UNORDERED, IDENTITY_FINISH), подсказывающие стриму, можно ли собирать конкурентно и важен ли порядок. Для параллельной группировки есть <code>groupingByConcurrent</code>.</p>
+<p>Главное практическое следствие — функции коллектора должны быть ассоциативны и без побочных эффектов, иначе параллельная свёртка даст неверный результат. И помните про обязательный merge в <code>toMap</code> для устойчивости к дубликатам.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Различите reduce (immutable, для значений) и collect (mutable reduction, для контейнеров), назовите базовые коллекторы и обязательно — ловушку <code>toMap</code> без merge (IllegalStateException на дубликате). Покажите <code>groupingBy</code> с downstream (counting/mapping/<code>summingInt</code>) как замену ручному циклу и упомяните характеристики/ассоциативность для параллельной сборки.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/java/collect-vs-reduce/">Чем collect отличается от reduce при сборке стрима?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/tomap-duplicate-key/">Что произойдёт в Collectors.toMap, если два элемента дают одинаковый ключ, а merge-функция не передана?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/groupingby-counting/">Как одним коллектором получить «количество элементов в каждой группе»?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/tomap-null-value/">Функция значения в Collectors.toMap вернула null для одного из элементов. Что произойдёт?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/stream-collect/">Что делает терминальная операция collect?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/java/streams/">Stream API: устройство и ленивый конвейер</a><p>Что такое стрим, источники, промежуточные против терминальных, ленивость и short-circuiting, stateful-операции, параллельность и примитивные стримы.</p></li><li><a href="/learn/java/optional/">Optional: явное отсутствие значения</a><p>Зачем Optional, orElse против orElseGet, композиция map/flatMap/filter и антипаттерны использования.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Collectors и свёртка","description":"reduce против collect, базовые коллекторы и ловушка toMap, группировка и downstream-коллекторы, характеристики и параллельность.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/java/collectors/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

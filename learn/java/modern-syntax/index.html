@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Современный синтаксис: var, текстовые блоки, switch — разбор для собеседования</title>
+<meta name="description" content="Локальный вывод типа var, многострочные текстовые блоки, switch-выражения и другие удобства новых версий.">
+<link rel="canonical" href="https://getsotto.ru/learn/java/modern-syntax/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/java/modern-syntax/">
+<meta property="og:title" content="Современный синтаксис: var, текстовые блоки, switch — разбор для собеседования">
+<meta property="og:description" content="Локальный вывод типа var, многострочные текстовые блоки, switch-выражения и другие удобства новых версий.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#java">Java</a> <span>/</span> <span>Современный синтаксис: var, текстовые блоки, switch</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/learn/#java"},{"@type":"ListItem","position":3,"name":"Современный синтаксис: var, текстовые блоки, switch"}]}</script>
+  <h1>Современный синтаксис: var, текстовые блоки, switch</h1>
+  <p class="lead">Локальный вывод типа var, многострочные текстовые блоки, switch-выражения и другие удобства новых версий.</p>
+  <article class="md"><h2>var: локальный вывод типа</h2>
+<p>var (Java 10) позволяет не писать тип локальной переменной — компилятор выводит его из инициализатора. Важно: это НЕ динамическая типизация — тип статический и фиксируется на компиляции, просто не пишется руками. var работает только для локальных переменных с инициализатором (не для полей, параметров и без значения).</p>
+<p>Когда уместно: когда тип очевиден из правой части (var users = <code>new ArrayList&lt;User&gt;()</code>) — убирает дублирование. Когда вредит: когда из правой части тип неочевиден (var x = <code>service.process()</code>) — теряется читаемость. var — про устранение шума, а не про сокрытие типов.</p>
+<h2>Текстовые блоки</h2>
+<p>Текстовый блок (Java 15) — многострочный строковый литерал в тройных кавычках: убирает ад экранирования и конкатенации для встроенного JSON, SQL, HTML.</p>
+<p>Компилятор аккуратно убирает «случайные» отступы (incidental whitespace) по самой левой значимой строке, поэтому блок можно красиво выровнять по коду. Это обычная String — просто удобный способ её записать.</p>
+<pre class="lang-java"><code>String json = &quot;&quot;&quot;
+    {
+      &quot;id&quot;: 42,
+      &quot;name&quot;: &quot;Ann&quot;
+    }
+    &quot;&quot;&quot;;</code></pre>
+<h2>switch-выражения</h2>
+<p>switch-выражение (Java 14) возвращает значение и использует стрелочный синтаксис case L -&gt; …, у которого нет проваливания (fall-through) и не нужен break. Для блока с вычислением значение отдают через yield.</p>
+<p>Плюс исчерпываемость: switch-выражение по enum (или sealed-типу) обязано покрыть все варианты — компилятор это проверяет, что надёжнее старого statement-switch с легко забываемым break и default.</p>
+<pre class="lang-java"><code>int days = switch (month) {
+    case FEB -&gt; 28;
+    case APR, JUN, SEP, NOV -&gt; 30;
+    default -&gt; 31;
+};</code></pre>
+<h2>Прочие удобства</h2>
+<p>enhanced instanceof с паттерном (instanceof String s) — см. урок про pattern matching. Helpful NullPointerExceptions (Java 14, по умолчанию с 15) точно указывают, ЧТО именно было null в цепочке <code>a.b().c</code> — резко ускоряет отладку.</p>
+<p>Эти мелочи по отдельности невелики, но вместе делают современную Java заметно лаконичнее и безопаснее, чем «Java 8 из памяти».</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Подчеркните, что var — статический вывод типа (не динамика), только для локальных переменных, и его уместность зависит от очевидности правой части. Назовите текстовые блоки (JSON/SQL без экранирования, incidental whitespace) и switch-выражения (возвращает значение, без fall-through, yield, исчерпываемость по enum/sealed). Бонус — helpful NPE messages.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/java/var-type-inference/">Что верно про var (Java 10)?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/java/switch-expression/">Чем switch-выражение (case L -&gt; …) надёжнее старого switch?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/text-blocks/">Что такое текстовый блок и как в нём работают отступы?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/java/records/">Records: компактные носители данных</a><p>Что генерирует record, канонический и компактный конструкторы, ограничения и когда применять.</p></li><li><a href="/learn/java/method-semantics/">Методы: pass-by-value, перегрузка, varargs</a><p>Почему Java всегда pass-by-value, разрешение перегрузки на этапе компиляции и устройство varargs.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Современный синтаксис: var, текстовые блоки, switch","description":"Локальный вывод типа var, многострочные текстовые блоки, switch-выражения и другие удобства новых версий.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/java/modern-syntax/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

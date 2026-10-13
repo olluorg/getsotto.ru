@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Проектирование событий и команд — разбор для собеседования</title>
+<meta name="description" content="Event vs command, обязательные поля envelope, idempotency key, schema evolution, thick vs thin payload и transactional outbox.">
+<link rel="canonical" href="https://getsotto.ru/learn/brokers/message-design/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/brokers/message-design/">
+<meta property="og:title" content="Проектирование событий и команд — разбор для собеседования">
+<meta property="og:description" content="Event vs command, обязательные поля envelope, idempotency key, schema evolution, thick vs thin payload и transactional outbox.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#brokers">Брокеры сообщений</a> <span>/</span> <span>Проектирование событий и команд</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Брокеры сообщений","item":"https://getsotto.ru/learn/#brokers"},{"@type":"ListItem","position":3,"name":"Проектирование событий и команд"}]}</script>
+  <h1>Проектирование событий и команд</h1>
+  <p class="lead">Event vs command, обязательные поля envelope, idempotency key, schema evolution, thick vs thin payload и transactional outbox.</p>
+  <article class="md"><h2>Event или command</h2>
+<p>Event сообщает о СВЕРШИВШЕМСЯ факте: OrderPaid, UserRegistered. Адресат — кто угодно, кто хочет реагировать; реакций может быть несколько. Command — намерение выполнить действие: ChargeCard, SendEmail. Адресат — один конкретный исполнитель.</p>
+<p>Смешивание этих смыслов даёт неясные правила ретраев и подписки. Повтор события безопасен при идемпотентной обработке; повтор команды может создать второй побочный эффект (второе списание), если нет idempotency key. Имена тоже отражают это: события в прошедшем времени (OrderPaid), команды в повелительном (PayOrder).</p>
+<h2>Envelope: обязательные поля</h2>
+<p>Сообщение делят на envelope (метаданные) и payload (тело). В envelope кладут: <code>eventId</code> (UUID, для дедупа), <code>eventType</code> + <code>schemaVersion</code> (для эволюции), <code>occurredAt</code> (бизнес-время), <code>aggregateId</code> (для партиционирования и порядка per-key), <code>correlationId</code>/<code>causationId</code> (трассировка цепочек запрос→событие→событие), source/producer-id.</p>
+<p>Эти поля важнее «красивого» формата payload: без них дальше нельзя ни дедуплицировать, ни эволюционировать схему, ни понять, что породило событие в логах. Структуру envelope обычно стандартизируют по всей компании — CloudEvents или собственный аналог.</p>
+<h2>Idempotency key</h2>
+<p>At-least-once доставка означает, что consumer обязан переживать дубли (см. урок про DLQ/retries). Технически — кладут стабильный idempotency key (обычно <code>eventId</code>) и держат таблицу processed_events с unique-constraint по нему.</p>
+<p>Ключевое: запись бизнес-эффекта и отметки об обработке должны идти в ОДНОЙ транзакции БД (или эквиваленте). Если упасть между ними, при повторе либо обе записи появятся снова, либо обе отсутствуют — третьего не дано, иначе дубли в проде.</p>
+<pre class="lang-sql"><code>-- атомарно: эффект и отметка вместе
+begin;
+  insert into processed_events(event_id) values (?) on conflict do nothing returning 1;
+  -- если вставка не дала строк — событие уже обрабатывали, пропускаем эффект
+  insert into payments(...) values (...);
+commit;</code></pre>
+<h2>Schema evolution</h2>
+<p>События живут дольше одной версии сервиса: продюсер уже выкатил v2, а старые consumer'ы ещё читают v1. Поэтому формат событий проектируют под эволюцию: добавление optional-поля — обратно совместимо (старые читатели его игнорируют), а удаление поля или смена типа требует плана миграции и согласования с потребителями.</p>
+<p>Schema Registry с правилами совместимости (BACKWARD/FORWARD/FULL) превращает договорённость в проверяемый контракт: попытка опубликовать несовместимую схему отклоняется на лету. Avro/Protobuf со Schema Registry — стандартный набор; чистый JSON работает, но контракт держится только на дисциплине.</p>
+<h2>Thick против thin payload</h2>
+<p>Сколько данных класть в событие — компромисс. Thick (event-carried state transfer): везти все нужные подписчикам поля внутри события, consumer'у не надо звать продюсера. Плюс — автономность; минус — раздутые события и сложнее эволюционировать.</p>
+<p>Thin (event notification): только идентификаторы, consumer сам подтягивает детали через API/БД. Плюс — компактность и одна модель данных у продюсера; минус — связность сервисов и нагрузка от вторичных вызовов. Выбор по нагрузке и автономности подписчиков. И отдельно — PII/чувствительные данные в payload требуют осторожности: в логах брокера, ретеншне и архивах они живут долго.</p>
+<h2>Transactional outbox</h2>
+<p>Классическая проблема: записали в БД, но не отправили событие в брокер (или наоборот). Двухфазный коммит между БД и брокером дорог и хрупок — его не делают.</p>
+<p>Решение — outbox: в той же транзакции БД, что и бизнес-данные, пишут строку в таблицу outbox. Отдельный publisher (или CDC поверх WAL — Debezium) читает outbox и публикует в брокер, помечая отправленные. Если publisher упадёт между транзакцией и отправкой, событие останется в outbox и уедет позже. Гарантия — «либо оба, либо ни одного», без 2PC.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Разграничьте event (свершившийся факт, много подписчиков, идемпотентный повтор) и command (намерение, один исполнитель, требуется idempotency key). Перечислите обязательные поля envelope (<code>eventId</code>/Type/Version/OccurredAt/<code>aggregateId</code>/<code>correlationId</code>). Объясните идемпотентную обработку с атомарной записью эффекта+отметки. Подчеркните schema evolution через Registry с правилами совместимости. Сравните thick и thin payload и завершите transactional outbox как стандартный паттерн «БД + событие» вместо 2PC.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/brokers/idempotent-consumer/">Как сделать consumer идемпотентным при семантике at-least-once?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/event-vs-command-design/">Чем event отличается от command в проектировании сообщений?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/message-envelope/">Какие поля обязательно закладывают в конверт (envelope) сообщения?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/fat-vs-thin-event/">В чём компромисс между «толстым» и «тонким» событием?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/brokers/event-vs-command-basic/">Чем событие (event) отличается от команды (command)?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/brokers/messaging-basics/">Очереди, pub/sub и гарантии доставки</a><p>Зачем брокер сообщений, queue против pub/sub, три семантики доставки, роль идемпотентности и компромисс порядок/масштаб.</p></li><li><a href="/learn/brokers/dlq-retries/">Retries, DLQ и идемпотентность</a><p>Что повторять и почему не всё, backoff/jitter, non-blocking retry, дизайн DLQ и redrive, идемпотентность как фундамент.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Проектирование событий и команд","description":"Event vs command, обязательные поля envelope, idempotency key, schema evolution, thick vs thin payload и transactional outbox.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/brokers/message-design/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

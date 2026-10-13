@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Actuator и наблюдаемость — разбор для собеседования</title>
+<meta name="description" content="Production-эндпоинты, health-проверки и probes, метрики через Micrometer, трассировка и безопасность эндпоинтов.">
+<link rel="canonical" href="https://getsotto.ru/learn/spring/actuator/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/spring/actuator/">
+<meta property="og:title" content="Actuator и наблюдаемость — разбор для собеседования">
+<meta property="og:description" content="Production-эндпоинты, health-проверки и probes, метрики через Micrometer, трассировка и безопасность эндпоинтов.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#spring">Spring</a> <span>/</span> <span>Actuator и наблюдаемость</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Spring","item":"https://getsotto.ru/learn/#spring"},{"@type":"ListItem","position":3,"name":"Actuator и наблюдаемость"}]}</script>
+  <h1>Actuator и наблюдаемость</h1>
+  <p class="lead">Production-эндпоинты, health-проверки и probes, метрики через Micrometer, трассировка и безопасность эндпоинтов.</p>
+  <article class="md"><h2>Что такое Actuator</h2>
+<p>spring-boot-starter-actuator добавляет готовые production-эндпоинты под /actuator: health (состояние), info (метаданные), metrics (метрики), env (свойства), beans, mappings, threaddump, heapdump, loggers и др. Это «приборная панель» приложения без написания кода.</p>
+<p>По умолчанию наружу (по HTTP) выставлен минимум; что показывать, настраивают через <code>management.endpoints.web.exposure.include</code> — выставлять всё подряд небезопасно.</p>
+<h2>Health checks и probes</h2>
+<p>/actuator/health — составной статус из отдельных HealthIndicator'ов (БД, диск, брокер, внешние сервисы); можно писать свои. Статус агрегируется в UP/DOWN.</p>
+<p>Для Kubernetes Actuator отдаёт liveness и readiness probes: liveness («жив ли процесс» — иначе перезапуск) и readiness («готов ли принимать трафик» — иначе исключают из балансировки). Их разделение критично для корректного деплоя без потери запросов.</p>
+<h2>Метрики и Micrometer</h2>
+<p>Метрики Boot собирает через Micrometer — это фасад метрик (как SLF4J для логов): код пишет метрики против Micrometer, а экспортёр отправляет их в конкретную систему (Prometheus, Graphite, CloudWatch).</p>
+<p>Основные типы: counter (монотонный счётчик), gauge (мгновенное значение), timer (длительность + частота). Из коробки собираются JVM/HTTP/датасорс-метрики; свои добавляют через MeterRegistry или аннотацию <code>@Timed</code>.</p>
+<pre class="lang-java"><code>@Timed(&quot;orders.create&quot;) // длительность и частота вызова как метрика
+@PostMapping(&quot;/orders&quot;)
+Order create(@RequestBody NewOrder req) { /* ... */ }</code></pre>
+<h2>Логи и трассировка</h2>
+<p>Actuator позволяет менять уровни логирования в рантайме (эндпоинт loggers) — удобно для диагностики без перезапуска. Это часть наблюдаемости вместе с метриками.</p>
+<p>Третий столп — распределённая трассировка: Micrometer Tracing (с OpenTelemetry/Zipkin) проставляет trace/span id и связывает запрос через цепочку сервисов. Логи + метрики + трейсы вместе дают полную картину поведения системы.</p>
+<h2>Безопасность эндпоинтов</h2>
+<p>Actuator-эндпоинты содержат чувствительное: env раскрывает свойства (включая возможные секреты), heapdump/threaddump — внутренности процесса. Их нельзя выставлять в публичный интернет без защиты.</p>
+<p>Практика: наружу отдавать только health (и то ограниченно), остальное — на отдельном порту/сети и под аутентификацией (Spring Security). Управляют экспозицией и доступом раздельно для web и для отдельных эндпоинтов.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Назовите Actuator как набор production-эндпоинтов и подчеркните управление экспозицией. Разберите health + разницу liveness/readiness probes (перезапуск vs балансировка) для Kubernetes. Объясните Micrometer как фасад метрик (counter/gauge/timer, экспортёр Prometheus) и упомяните трассировку (trace/span). Обязательно — безопасность: env/heapdump не выставлять наружу.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/spring/liveness-vs-readiness/">Чем liveness probe отличается от readiness probe?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/micrometer-latency-percentiles/">Как в Spring Boot собрать перцентили времени ответа HTTP-запросов?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/actuator-exposure/">Что важно учесть при выставлении наружу эндпоинтов Actuator?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/readiness-external-dependency/">Сервис зависит от внешнего платёжного API. Стоит ли включать проверку его доступности в readiness-пробу?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/actuator-health-basic/">Для чего нужен эндпоинт /actuator/health?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/spring/boot/">Spring Boot: автоконфигурация и starters</a><p>@SpringBootApplication и starters, механизм автоконфигурации по условиям, переопределение через @ConditionalOnMissingBean, внешняя конфигурация и её приоритеты.</p></li><li><a href="/learn/spring/resilience-observability/">Resilience: таймауты, ретраи и circuit breaker</a><p>Защита от каскадных отказов: таймауты, безопасные ретраи, состояния circuit breaker, bulkhead и rate limiter, fallback и порядок паттернов.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Actuator и наблюдаемость","description":"Production-эндпоинты, health-проверки и probes, метрики через Micrometer, трассировка и безопасность эндпоинтов.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/spring/actuator/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

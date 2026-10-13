@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spring Cloud: config, discovery, gateway, tracing — разбор для собеседования</title>
+<meta name="description" content="Config Server, Eureka/DiscoveryClient, Spring Cloud Gateway и распределённая трассировка.">
+<link rel="canonical" href="https://getsotto.ru/learn/spring/cloud-platform/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/spring/cloud-platform/">
+<meta property="og:title" content="Spring Cloud: config, discovery, gateway, tracing — разбор для собеседования">
+<meta property="og:description" content="Config Server, Eureka/DiscoveryClient, Spring Cloud Gateway и распределённая трассировка.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#spring">Spring</a> <span>/</span> <span>Spring Cloud: config, discovery, gateway, tracing</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Spring","item":"https://getsotto.ru/learn/#spring"},{"@type":"ListItem","position":3,"name":"Spring Cloud: config, discovery, gateway, tracing"}]}</script>
+  <h1>Spring Cloud: config, discovery, gateway, tracing</h1>
+  <p class="lead">Config Server, Eureka/DiscoveryClient, Spring Cloud Gateway и распределённая трассировка.</p>
+  <article class="md"><h2>Зачем Spring Cloud</h2>
+<p>Когда монолит разрезан на сервисы, появляются задачи, которых раньше не было: где хранить настройки десятка сервисов, как сервису найти соседа, через какую точку внешний трафик попадает внутрь и как проследить запрос, прошедший через пять сервисов. Spring Cloud — набор библиотек, которые решают эти задачи на стороне приложения.</p>
+<p>Важная оговорка с самого начала: в Kubernetes заметную часть этих задач уже решает платформа. Поэтому полезно знать не только, как устроен каждый компонент, но и когда он не нужен.</p>
+<h2>Config Server</h2>
+<p>Spring Cloud Config Server — отдельный сервис, который раздаёт конфигурацию всем приложениям. Источник настроек — чаще всего Git-репозиторий: файлы вида <code>orders-service-prod.yml</code> лежат в нём, а сервис при старте спрашивает у Config Server свою конфигурацию по имени приложения и профилю.</p>
+<p>Что это даёт: настройки меняются без пересборки артефакта, история изменений хранится в Git, одинаковые параметры не копируются по репозиториям сервисов. Обновить настройки без перезапуска помогает <code>@RefreshScope</code> и событие обновления.</p>
+<p>Чего Config Server не решает — хранения секретов. Пароли и ключи в Git-репозитории остаются уязвимыми даже в закрытом репозитории. Для них используют Vault, облачный KMS или секреты Kubernetes. В Kubernetes обычную конфигурацию часто отдают через ConfigMap, и отдельный Config Server тогда не нужен.</p>
+<h2>Service discovery</h2>
+<p>Сервисы в облаке постоянно перезапускаются и меняют адреса, поэтому вызывать соседа по жёстко прописанному <code>host:port</code> нельзя. Service discovery позволяет обращаться по логическому имени: сервис при старте регистрируется в реестре, а клиент спрашивает у реестра живые экземпляры и выбирает один из них (балансировка на стороне клиента).</p>
+<p>Классический реестр в Spring Cloud — Eureka из стека Netflix. В Kubernetes ту же роль выполняют объект Service и встроенный DNS: имя <code>orders-service</code> и так разрешается в живые поды. Поэтому в Kubernetes Eureka обычно избыточна.</p>
+<h2>API Gateway</h2>
+<p>Gateway — единая точка входа для внешнего трафика. Spring Cloud Gateway принимает запрос и по правилам маршрутизации передаёт его нужному сервису. На шлюзе удобно делать то, что одинаково для всех сервисов: завершение TLS, проверку токена, ограничение частоты запросов, добавление correlation id, постепенное переключение трафика на новую версию.</p>
+<p>Главное правило: на шлюзе не должно быть бизнес-логики. Если в него начинают переносить правила предметной области, он превращается во второй монолит, который нужно выкатывать вместе со всеми сервисами.</p>
+<pre class="lang-yaml"><code>spring:
+  cloud:
+    gateway:
+      routes:
+        - id: orders
+          uri: lb://orders-service     # lb — балансировка через discovery
+          predicates:
+            - Path=/orders/**</code></pre>
+<h2>Распределённая трассировка</h2>
+<p>Трассировка связывает один пользовательский запрос в цепочке сервисов: каждый сервис получает trace id из заголовка, создаёт свой span и передаёт контекст дальше. В системе вроде Zipkin или Jaeger видно, сколько времени запрос провёл в каждом сервисе и где возникла ошибка.</p>
+<p>В Spring Boot 3 трассировку строят на Micrometer Tracing с мостом в OpenTelemetry. Spring Cloud Sleuth, о котором пишут старые материалы, больше не развивается — для Boot 3 он не подходит.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Разберите компоненты по задачам, а не по названиям: Config Server — централизованная конфигурация (но секреты — в Vault или KMS), discovery — поиск по логическому имени, Gateway — единая точка входа без бизнес-логики, трассировка — путь запроса через сервисы на Micrometer Tracing и OpenTelemetry.</p>
+<p>Сильный акцент — граница с платформой. В Kubernetes discovery даёт Service и DNS, конфигурацию — ConfigMap, а часть функций шлюза и трассировки может взять на себя service mesh вроде Istio. Выбирать компоненты стоит по тому, чего не хватает в инфраструктуре, а не подключать весь Spring Cloud по привычке.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/spring/config-server/">Зачем нужен Spring Cloud Config Server?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/spring-cloud-gateway/">Какая основная роль Spring Cloud Gateway?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/service-discovery/">Что такое service discovery и где здесь Eureka?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/distributed-tracing-propagation/">Что необходимо, чтобы распределённая трассировка связала запрос, прошедший через несколько сервисов?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/service-discovery-basic/">Зачем нужен service discovery в системе из многих сервисов?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/spring/resilience-observability/">Resilience: таймауты, ретраи и circuit breaker</a><p>Защита от каскадных отказов: таймауты, безопасные ретраи, состояния circuit breaker, bulkhead и rate limiter, fallback и порядок паттернов.</p></li><li><a href="/learn/spring/http-security/">HTTP, cookies и сессии</a><p>Семантика HTTP-методов и кэширование, cookies и их флаги безопасности, stateful против stateless сессий, HTTPS и граница authn/authz.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Spring Cloud: config, discovery, gateway, tracing","description":"Config Server, Eureka/DiscoveryClient, Spring Cloud Gateway и распределённая трассировка.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/spring/cloud-platform/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

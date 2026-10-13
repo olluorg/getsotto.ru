@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Потоки: создание, состояния и отмена — разбор для собеседования</title>
+<meta name="description" content="Thread и Runnable, стоимость платформенных потоков, состояния жизненного цикла, кооперативное прерывание и daemon-потоки.">
+<link rel="canonical" href="https://getsotto.ru/learn/java/threads/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/learn/java/threads/">
+<meta property="og:title" content="Потоки: создание, состояния и отмена — разбор для собеседования">
+<meta property="og:description" content="Thread и Runnable, стоимость платформенных потоков, состояния жизненного цикла, кооперативное прерывание и daemon-потоки.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/learn/">Статьи</a> <span>/</span> <a href="/learn/#java">Java</a> <span>/</span> <span>Потоки: создание, состояния и отмена</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Статьи","item":"https://getsotto.ru/learn/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/learn/#java"},{"@type":"ListItem","position":3,"name":"Потоки: создание, состояния и отмена"}]}</script>
+  <h1>Потоки: создание, состояния и отмена</h1>
+  <p class="lead">Thread и Runnable, стоимость платформенных потоков, состояния жизненного цикла, кооперативное прерывание и daemon-потоки.</p>
+  <article class="md"><h2>Поток как единица выполнения</h2>
+<p>Поток — независимая последовательность выполнения внутри процесса; все потоки делят кучу, но у каждого свой стек. Задачу описывают через Runnable (или Callable, если нужен результат), а Thread её выполняет.</p>
+<p>Платформенный Thread — это тонкая обёртка над потоком ОС, и он дорог: ~1 МБ стека и переключения контекста через ядро. Поэтому потоки не создают на каждый запрос, а переиспользуют через пулы (отдельный урок).</p>
+<p>Частая ошибка — вызвать <code>run()</code> вместо <code>start()</code>: <code>run()</code> просто выполнит код в текущем потоке, а новый поток создаёт именно <code>start()</code>.</p>
+<h2>Монитор: основа синхронизации</h2>
+<p>Раз потоки делят память, им нужен механизм согласованного доступа — в Java это монитор (его ещё называют intrinsic lock). С каждым объектом неявно связан монитор, и в любой момент его может удерживать только один поток, остальные ждут. Это базовый кирпич взаимного исключения, на котором держится вся синхронизация языка.</p>
+<p>Поток «входит» в монитор и «выходит» из него: вход даёт эксклюзивный доступ к защищаемой секции, а выход к тому же делает сделанные изменения видимыми следующему потоку (по правилу happens-before). Мониторы реентерабельны — поток, уже владеющий монитором, может войти в него повторно без самоблокировки.</p>
+<p>Запомните это определение сразу: монитор будет всплывать всю тему — на нём построен synchronized, через него описаны состояния BLOCKED/WAITING ниже и методы wait/notify. Подробный разбор — в уроке про synchronized.</p>
+<h2>Состояния жизненного цикла</h2>
+<p>Поток проходит состояния (Thread.State): NEW (создан, не запущен), RUNNABLE (выполняется или готов), BLOCKED (ждёт входа в монитор под synchronized), WAITING (бессрочно ждёт — wait/join/park), TIMED_WAITING (ждёт с таймаутом — sleep, <code>wait(t)</code>), TERMINATED (завершён).</p>
+<p>Различие BLOCKED и WAITING важно: BLOCKED — это конкуренция за монитор, WAITING — добровольное ожидание условия. По дампу потоков именно эти состояния показывают, где система «застряла».</p>
+<figure><img src="/learn/assets/thread-states.webp" alt="Диаграмма состояний потока Java: Новый → Готов к выполнению ⇄ Выполняется, и состояния Заблокирован, Ожидание, Ожидание с таймаутом, ниже — Завершён; стрелки переходов подписаны." loading="lazy"><figcaption>Жизненный цикл потока: переходы между NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING и TERMINATED.</figcaption></figure>
+<h2>Прерывание и кооперативная отмена</h2>
+<p>В Java нет принудительной остановки потока (<code>Thread.stop()</code> признан небезопасным — он мог оставить инварианты в полусломанном состоянии — и с Java 20 всегда бросает UnsupportedOperationException). Отмена кооперативна: <code>interrupt()</code> лишь выставляет флаг, а поток сам обязан его проверять и завершаться.</p>
+<p>Блокирующие методы (sleep, wait, join, блокирующий IO в каналах) реагируют на флаг, бросая InterruptedException. Правило: не глотать его молча — либо пробросить, либо восстановить флаг через <code>Thread.currentThread().interrupt()</code>, иначе отмена «теряется».</p>
+<pre class="lang-java"><code>while (!Thread.currentThread().isInterrupted()) {
+    try { queue.take(); }
+    catch (InterruptedException e) {
+        Thread.currentThread().interrupt(); // восстановить флаг
+        break;                              // и корректно выйти
+    }
+}</code></pre>
+<h2>Daemon-потоки и завершение</h2>
+<p>Потоки бывают user и daemon. JVM завершается, когда не остаётся ни одного живого user-потока; daemon-потоки (фоновые: GC-хелперы, таймеры) при этом просто убиваются. Поэтому в daemon нельзя держать критичную работу, которую нельзя оборвать на полуслове.</p>
+<p><code>join()</code> позволяет дождаться завершения другого потока — между его завершением и возвратом из join есть happens-before, поэтому результаты работы потока видны после join.</p>
+<h2>Как отвечать на собеседовании</h2>
+<p>Отличайте <code>start()</code>/<code>run()</code>, назовите состояния и разницу BLOCKED/WAITING (для чтения thread dump), и грамотно объясните кооперативную отмену: <code>interrupt()</code> — это флаг, InterruptedException нельзя глотать (восстановить флаг), а <code>stop()</code> удалён. Упомяните дороговизну платформенных потоков как мотивацию пулов и виртуальных потоков.</p></article>
+  <section class="block"><h2>Вопросы по теме</h2><ul class="links"><li><a href="/questions/java/thread-runnable-callable/">Чем Thread, Runnable и Callable отличаются?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/java/thread-states/">Поток пытается войти в synchronized-блок, занятый другим потоком. В каком состоянии он находится?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/thread-interrupt/">Что верно про прерывание потока через interrupt()?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/daemon-threads/">Что верно про daemon-потоки?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/thread-start-vs-run/">Чем вызов start() у потока отличается от прямого вызова run()?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Читайте также</h2><ul class="links"><li><a href="/learn/java/synchronized/">synchronized, мониторы и wait/notify</a><p>Взаимное исключение и видимость через монитор, reentrancy, guarded blocks с wait/notify и причины deadlock.</p></li><li><a href="/learn/java/jmm/">Java Memory Model: happens-before и volatile</a><p>Зачем нужна модель памяти, видимость и переупорядочивание, отношение happens-before, семантика volatile и final, гонки данных.</p></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Потоки: создание, состояния и отмена","description":"Thread и Runnable, стоимость платформенных потоков, состояния жизненного цикла, кооперативное прерывание и daemon-потоки.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/learn/java/threads/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>
