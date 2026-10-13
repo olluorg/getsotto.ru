@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Рендеринг и производительность React — карта «Frontend-разработчик»</title>
-<meta name="description" content="Когда компонент перерисовывается, как работает сравнение и как избежать лишней работы.">
-<link rel="canonical" href="https://getsotto.ru/roadmap/frontend/react-rendering/">
+<title>Хуки — карта «React»</title>
+<meta name="description" content="useState, useEffect, useRef, useMemo и правила, по которым они работают.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/react/hooks/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:url" content="https://getsotto.ru/roadmap/frontend/react-rendering/">
-<meta property="og:title" content="Рендеринг и производительность React — карта «Frontend-разработчик»">
-<meta property="og:description" content="Когда компонент перерисовывается, как работает сравнение и как избежать лишней работы.">
+<meta property="og:url" content="https://getsotto.ru/roadmap/react/hooks/">
+<meta property="og:title" content="Хуки — карта «React»">
+<meta property="og:description" content="useState, useEffect, useRef, useMemo и правила, по которым они работают.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,18 +45,23 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#frameworks">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/frameworks/">Фреймворк</a> <span>/</span> <a href="/roadmap/frontend/react/">React</a> <span>/</span> <span>Рендеринг и производительность React</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#frameworks"},{"@type":"ListItem","position":3,"name":"Фреймворк","item":"https://getsotto.ru/roadmap/frontend/frameworks/"},{"@type":"ListItem","position":4,"name":"React","item":"https://getsotto.ru/roadmap/frontend/react/"},{"@type":"ListItem","position":5,"name":"Рендеринг и производительность React"}]}</script>
-  <h1>Рендеринг и производительность React</h1>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#hooks">React</a> <span>/</span> <span>Хуки</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#hooks"},{"@type":"ListItem","position":4,"name":"Хуки"}]}</script>
+  <h1>Хуки</h1>
   <div class="chips"><span class="rm-kind k-core">Основа</span></div>
-  <p class="lead">Когда компонент перерисовывается, как работает сравнение и как избежать лишней работы.</p>
-  <article class="md"><p>Компонент перерисовывается, когда меняется <b>его состояние</b>, <b>контекст</b>, на который он подписан, или <b>перерисовался родитель</b> — по умолчанию вместе с родителем перерисовываются все потомки, даже если их props не изменились.</p>
+  <p class="lead">useState, useEffect, useRef, useMemo и правила, по которым они работают.</p>
+  <article class="md"><p>React хранит состояние хуков по <b>порядку вызова</b> в компоненте — поэтому хуки вызывают только на верхнем уровне, не в условиях и циклах.</p>
+<div class="table"><table><thead><tr><th>хук</th><th>для чего</th></tr></thead><tbody><tr><td><code>useState</code></td><td>состояние</td></tr><tr><td><code>useEffect</code></td><td>синхронизация с внешним миром: подписки, таймеры, запросы</td></tr><tr><td><code>useRef</code></td><td>изменяемое значение без перерисовки, ссылка на DOM</td></tr><tr><td><code>useMemo</code>, <code>useCallback</code></td><td>запомнить вычисление или функцию между рендерами</td></tr><tr><td><code>useContext</code></td><td>данные из контекста</td></tr><tr><td><code>useReducer</code></td><td>сложное состояние с действиями</td></tr></tbody></table></div>
+<pre class="lang-jsx"><code>useEffect(() =&gt; {
+  const id = setInterval(tick, 1000);
+  return () =&gt; clearInterval(id);     // очистка
+}, [tick]);</code></pre>
 <h3>Что важно знать</h3>
-<ul><li>Перерисовка — это вызов функции и сравнение элементов, а не обязательно изменение DOM. Чаще всего она дешёвая.</li><li><code>React.memo</code> пропускает перерисовку при тех же props; работает, только если props стабильны — объекты и функции создаются заново на каждом рендере, поэтому нужны <code>useMemo</code>/<code>useCallback</code>.</li><li>React Compiler автоматически запоминает значения и компоненты, снимая большую часть ручной мемоизации.</li><li>Опустить состояние ниже по дереву или передать тяжёлые части через <code>children</code> — часто лучше любой мемоизации.</li><li>Длинные списки — виртуализация (рендерить только видимое).</li><li><code>useTransition</code> и <code>useDeferredValue</code> — несрочные обновления не мешают вводу.</li><li>Измерять до оптимизации: React DevTools Profiler.</li></ul></article>
-  <section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/frontend/react-rerender/">Когда компонент React перерисовывается и как избежать лишних рендеров?</a> <span class="lvl lvl-junior">Junior</span><p>Компонент перерисовывается, когда меняется его состояние, контекст, который он читает, или перерисовывается родитель (по умолчанию — все дети, даже с теми же props). React.memo…</p></li><li><a href="/questions/frontend/react-reconciliation/">Что такое виртуальный DOM и зачем в списках нужен key?</a> <span class="lvl lvl-junior">Junior</span><p>Компонент возвращает описание интерфейса (дерево React-элементов). При обновлении React сравнивает новое дерево со старым (reconciliation) и применяет к настоящему DOM минимальные…</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/reference/react/memo" rel="noopener" target="_blank">react.dev: memo ↗</a></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/frontend/react-hooks/">← Хуки</a><a class="next" href="/roadmap/frontend/react-state-management/">Управление состоянием →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#frameworks">← Вся карта «Frontend-разработчик»</a></p>
+<ul><li>Массив зависимостей должен содержать все используемые значения; пустой массив — эффект один раз после монтирования.</li><li>Эффект — не место для вычисления данных из props: это делают при рендере.</li><li>В режиме разработки StrictMode монтирует компонент дважды, чтобы поймать эффекты без очистки.</li><li>Свои хуки (<code>useDebounce</code>, <code>useMediaQuery</code>) выносят повторяющуюся логику.</li></ul></article>
+  <section class="block"><h2>Темы этапа</h2><ul class="links"><li><a href="/roadmap/react/refs/">Refs и работа с DOM</a> <span class="rm-kind k-core">Основа</span><p>useRef, доступ к DOM-элементам, фокус и интеграция со сторонними библиотеками.</p></li><li><a href="/roadmap/react/custom-hooks/">Пользовательские хуки</a> <span class="rm-kind k-core">Основа</span><p>Как выносить повторяющуюся логику с состоянием и эффектами в свои хуки.</p></li></ul></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/frontend/react-hooks-rules/">Какие правила хуков в React и почему их нельзя вызывать в условиях?</a> <span class="lvl lvl-junior">Junior</span><p>Хуки вызывают только на верхнем уровне компонента или своего хука — не в условиях, циклах и вложенных функциях — и только из React-функций. Причина: React хранит состояние хуков…</p></li><li><a href="/questions/frontend/react-useeffect/">Как работает useEffect и что такое массив зависимостей?</a> <span class="lvl lvl-junior">Junior</span><p>useEffect запускает побочный эффект после отрисовки: подписки, таймеры, запросы, синхронизацию с внешней системой. Зависимости определяют, когда эффект перезапускается: [] — один…</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/you-might-not-need-an-effect" rel="noopener" target="_blank">react.dev: Вам может не понадобиться эффект ↗</a></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/react/composition/">← Композиция компонентов</a><a class="next" href="/roadmap/react/refs/">Refs и работа с DOM →</a></nav>
+  <p class="rm-back"><a href="/roadmap/react/#hooks">← Вся карта «React»</a></p>
 </div></section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Рендеринг и производительность React","description":"Когда компонент перерисовывается, как работает сравнение и как избежать лишней работы.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/frontend/react-rendering/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Хуки","description":"useState, useEffect, useRef, useMemo и правила, по которым они работают.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/react/hooks/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 
 <section id="access" class="access">
   <div class="wrap">

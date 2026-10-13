@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Компоненты, props и state — карта «Frontend-разработчик»</title>
-<meta name="description" content="Из чего строится React-приложение — компоненты, однонаправленный поток данных, списки и ключи.">
-<link rel="canonical" href="https://getsotto.ru/roadmap/frontend/react-components/">
+<title>Next.js — карта «React»</title>
+<meta name="description" content="Мета-фреймворк на React — маршрутизация по файлам, SSR и SSG, серверные компоненты.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/react/nextjs/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:url" content="https://getsotto.ru/roadmap/frontend/react-components/">
-<meta property="og:title" content="Компоненты, props и state — карта «Frontend-разработчик»">
-<meta property="og:description" content="Из чего строится React-приложение — компоненты, однонаправленный поток данных, списки и ключи.">
+<meta property="og:url" content="https://getsotto.ru/roadmap/react/nextjs/">
+<meta property="og:title" content="Next.js — карта «React»">
+<meta property="og:description" content="Мета-фреймворк на React — маршрутизация по файлам, SSR и SSG, серверные компоненты.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,18 +45,24 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#frameworks">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/frameworks/">Фреймворк</a> <span>/</span> <a href="/roadmap/frontend/react/">React</a> <span>/</span> <span>Компоненты, props и state</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#frameworks"},{"@type":"ListItem","position":3,"name":"Фреймворк","item":"https://getsotto.ru/roadmap/frontend/frameworks/"},{"@type":"ListItem","position":4,"name":"React","item":"https://getsotto.ru/roadmap/frontend/react/"},{"@type":"ListItem","position":5,"name":"Компоненты, props и state"}]}</script>
-  <h1>Компоненты, props и state</h1>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#nextjs">React</a> <span>/</span> <span>Next.js</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#nextjs"},{"@type":"ListItem","position":4,"name":"Next.js"}]}</script>
+  <h1>Next.js</h1>
   <div class="chips"><span class="rm-kind k-core">Основа</span></div>
-  <p class="lead">Из чего строится React-приложение — компоненты, однонаправленный поток данных, списки и ключи.</p>
-  <article class="md"><p><b>Props</b> — входные данные от родителя, только для чтения. <b>State</b> — собственное состояние компонента; его изменение вызывает перерисовку. Данные текут <b>сверху вниз</b>, события — снизу вверх через колбэки.</p>
+  <p class="lead">Мета-фреймворк на React — маршрутизация по файлам, SSR и SSG, серверные компоненты.</p>
+  <article class="md"><p>Next.js добавляет к React то, чего в нём нет: маршрутизацию по структуре файлов, серверный рендеринг и статическую генерацию, загрузку данных на сервере, оптимизацию картинок и шрифтов, API-обработчики.</p>
+<pre><code>app/
+  layout.tsx           общий каркас
+  page.tsx             /
+  orders/
+    page.tsx           /orders
+    [id]/page.tsx      /orders/42</code></pre>
 <h3>Что важно знать</h3>
-<ul><li>Состояние меняют только через сеттер и <b>неизменяемо</b>: новый объект или массив, а не <code>push</code> в старый — иначе React не заметит изменения.</li><li>Обновление состояния асинхронно и пакетное; зависимое от предыдущего значения — через функцию: <code>setN(n =&gt; n + 1)</code>.</li><li><b>Подъём состояния</b>: общее для двух компонентов состояние хранят в ближайшем общем родителе.</li><li><b>Ключи в списках</b> — стабильный идентификатор элемента, не индекс: иначе при вставке и удалении путаются состояние и поля ввода.</li><li>Композиция через <code>children</code> вместо глубокой передачи props.</li><li>Производное значение вычисляют при рендере, а не хранят в отдельном state.</li></ul></article>
-  <section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/frontend/react-state-props/">Чем state отличается от props в React?</a> <span class="lvl lvl-junior">Junior</span><p>props — входные данные от родителя, компонент их только читает. state — собственные данные компонента, меняются через setState и вызывают перерисовку. Данные текут сверху вниз…</p></li><li><a href="/questions/frontend/react-state-immutability/">Почему в React нельзя изменять состояние напрямую?</a> <span class="lvl lvl-junior">Junior</span><p>React узнаёт об изменении, сравнивая ссылки (Object.is). Мутация (items.push(x), user.name = ...) оставляет ссылку прежней — перерисовки не будет, а memo и useEffect не увидят…</p></li><li><a href="/questions/frontend/react-reconciliation/">Что такое виртуальный DOM и зачем в списках нужен key?</a> <span class="lvl lvl-junior">Junior</span><p>Компонент возвращает описание интерфейса (дерево React-элементов). При обновлении React сравнивает новое дерево со старым (reconciliation) и применяет к настоящему DOM минимальные…</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/describing-the-ui" rel="noopener" target="_blank">react.dev: Описание интерфейса ↗</a></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/frontend/react/">← React</a><a class="next" href="/roadmap/frontend/react-hooks/">Хуки →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#frameworks">← Вся карта «Frontend-разработчик»</a></p>
+<ul><li><b>App Router</b>: компоненты по умолчанию серверные; <code>&quot;use client&quot;</code> — граница клиентского кода.</li><li>Данные загружаются прямо в серверных компонентах (<code>await fetch</code>, запрос в БД), без отдельного API.</li><li>Стратегии: статическая страница, динамическая на каждый запрос, пересборка по времени или по событию.</li><li><b>Server Actions</b> — функции на сервере, вызываемые из форм.</li><li>Кэширование в Next.js многоуровневое — частый источник «почему данные не обновились».</li><li>Альтернатива — React Router в режиме фреймворка (бывший Remix).</li></ul></article>
+  <section class="block"><h2>Темы этапа</h2><ul class="links"><li><a href="/roadmap/react/server-components/">Серверные компоненты</a> <span class="rm-kind k-core">Основа</span><p>Компоненты, которые выполняются только на сервере и не попадают в бандл.</p></li><li><a href="/roadmap/frontend/rendering-strategies/">Серверный рендеринг и мета-фреймворки</a> <span class="rm-kind k-core">Основа</span><p>CSR, SSR, SSG и гидратация — где и когда собирается HTML; Next.js и аналоги.</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://nextjs.org/docs" rel="noopener" target="_blank">Next.js ↗</a></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/react/typescript/">← React с TypeScript</a><a class="next" href="/roadmap/react/server-components/">Серверные компоненты →</a></nav>
+  <p class="rm-back"><a href="/roadmap/react/#nextjs">← Вся карта «React»</a></p>
 </div></section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Компоненты, props и state","description":"Из чего строится React-приложение — компоненты, однонаправленный поток данных, списки и ключи.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/frontend/react-components/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Next.js","description":"Мета-фреймворк на React — маршрутизация по файлам, SSR и SSG, серверные компоненты.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/react/nextjs/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 
 <section id="access" class="access">
   <div class="wrap">

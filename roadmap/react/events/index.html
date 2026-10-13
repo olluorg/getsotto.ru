@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>React — карта «Frontend-разработчик»</title>
-<meta name="description" content="Самая востребованная библиотека интерфейсов — компоненты, состояние, хуки, рендеринг и экосистема.">
-<link rel="canonical" href="https://getsotto.ru/roadmap/frontend/react/">
+<title>События — карта «React»</title>
+<meta name="description" content="Обработчики событий, передача колбэков детям и синтетические события.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/react/events/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:url" content="https://getsotto.ru/roadmap/frontend/react/">
-<meta property="og:title" content="React — карта «Frontend-разработчик»">
-<meta property="og:description" content="Самая востребованная библиотека интерфейсов — компоненты, состояние, хуки, рендеринг и экосистема.">
+<meta property="og:url" content="https://getsotto.ru/roadmap/react/events/">
+<meta property="og:title" content="События — карта «React»">
+<meta property="og:description" content="Обработчики событий, передача колбэков детям и синтетические события.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,22 +45,26 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#frameworks">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/frameworks/">Фреймворк</a> <span>/</span> <span>React</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#frameworks"},{"@type":"ListItem","position":3,"name":"Фреймворк","item":"https://getsotto.ru/roadmap/frontend/frameworks/"},{"@type":"ListItem","position":4,"name":"React"}]}</script>
-  <h1>React</h1>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#start">React</a> <span>/</span> <a href="/roadmap/react/start/">Старт и JSX</a> <span>/</span> <span>События</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#start"},{"@type":"ListItem","position":4,"name":"Старт и JSX","item":"https://getsotto.ru/roadmap/react/start/"},{"@type":"ListItem","position":5,"name":"События"}]}</script>
+  <h1>События</h1>
   <div class="chips"><span class="rm-kind k-core">Основа</span></div>
-  <p class="lead">Самая востребованная библиотека интерфейсов — компоненты, состояние, хуки, рендеринг и экосистема.</p>
-  <article class="md"><p>React описывает интерфейс функциями-компонентами, которые возвращают JSX. Когда меняется состояние, React вызывает компонент заново, сравнивает новое дерево элементов со старым и применяет к DOM минимальные изменения.</p>
-<pre class="lang-jsx"><code>function Counter({ step = 1 }) {
-  const [n, setN] = useState(0);
-  return &lt;button onClick={() =&gt; setN(n + step)}&gt;Нажато {n}&lt;/button&gt;;
+  <p class="lead">Обработчики событий, передача колбэков детям и синтетические события.</p>
+  <article class="md"><pre class="lang-jsx"><code>function Search({ onSearch }) {
+  const [q, setQ] = useState(&quot;&quot;);
+  return (
+    &lt;form onSubmit={(e) =&gt; { e.preventDefault(); onSearch(q); }}&gt;
+      &lt;input value={q} onChange={(e) =&gt; setQ(e.target.value)} /&gt;
+      &lt;button&gt;Найти&lt;/button&gt;
+    &lt;/form&gt;
+  );
 }</code></pre>
-<p>Ветка охватывает то, что спрашивают на собеседованиях: <b>props и state</b>, <b>хуки</b> и их правила, <b>когда и почему компонент перерисовывается</b>, <b>управление состоянием</b>, <b>формы</b>, <b>маршрутизация</b> и серверный рендеринг.</p>
-<p>Документация react.dev — один из лучших учебников в индустрии; её раздела Learn достаточно, чтобы уверенно начать.</p></article>
-  <section class="block"><h2>Темы</h2><ul class="links"><li><a href="/roadmap/frontend/react-components/">Компоненты, props и state</a> <span class="rm-kind k-core">Основа</span><p>Из чего строится React-приложение — компоненты, однонаправленный поток данных, списки и ключи.</p></li><li><a href="/roadmap/frontend/react-hooks/">Хуки</a> <span class="rm-kind k-core">Основа</span><p>useState, useEffect, useRef, useMemo и правила, по которым они работают.</p></li><li><a href="/roadmap/frontend/react-rendering/">Рендеринг и производительность React</a> <span class="rm-kind k-core">Основа</span><p>Когда компонент перерисовывается, как работает сравнение и как избежать лишней работы.</p></li><li><a href="/roadmap/frontend/react-state-management/">Управление состоянием</a> <span class="rm-kind k-core">Основа</span><p>Локальное, глобальное и серверное состояние — Context, Redux Toolkit, Zustand, TanStack Query.</p></li><li><a href="/roadmap/frontend/react-forms/">Формы в React</a> <span class="rm-kind k-core">Основа</span><p>Контролируемые и неконтролируемые поля, валидация, библиотеки форм.</p></li><li><a href="/roadmap/frontend/routing/">Маршрутизация</a> <span class="rm-kind k-core">Основа</span><p>Несколько страниц в одностраничном приложении — React Router, вложенные маршруты, загрузка данных.</p></li></ul></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/frontend/react-state-props/">Чем state отличается от props в React?</a> <span class="lvl lvl-junior">Junior</span><p>props — входные данные от родителя, компонент их только читает. state — собственные данные компонента, меняются через setState и вызывают перерисовку. Данные текут сверху вниз…</p></li><li><a href="/questions/frontend/react-reconciliation/">Что такое виртуальный DOM и зачем в списках нужен key?</a> <span class="lvl lvl-junior">Junior</span><p>Компонент возвращает описание интерфейса (дерево React-элементов). При обновлении React сравнивает новое дерево со старым (reconciliation) и применяет к настоящему DOM минимальные…</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn" rel="noopener" target="_blank">react.dev ↗</a></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/frontend/frameworks/">← Фреймворк</a><a class="next" href="/roadmap/frontend/react-components/">Компоненты, props и state →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#frameworks">← Вся карта «Frontend-разработчик»</a></p>
+<h3>Что важно знать</h3>
+<ul><li>Передавать функцию, а не вызывать её: <code>onClick={handleClick}</code>, а не <code>onClick={handleClick()}</code>.</li><li>Данные текут вниз через props, события — вверх через колбэки (<code>onSearch</code>, <code>onChange</code>).</li><li>React вешает обработчики на корень приложения (делегирование) и передаёт синтетическое событие с тем же интерфейсом, что у браузерного.</li><li><code>e.stopPropagation()</code> и <code>e.preventDefault()</code> работают как обычно.</li><li>Обработчик видит состояние на момент рендера — замыкание. Отсюда «устаревшее состояние» в таймерах и подписках.</li></ul></article>
+  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/responding-to-events" rel="noopener" target="_blank">react.dev: Обработка событий ↗</a></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/react/jsx/">← JSX и условный рендеринг</a><a class="next" href="/roadmap/react/components/">Компоненты, props и state →</a></nav>
+  <p class="rm-back"><a href="/roadmap/react/#start">← Вся карта «React»</a></p>
 </div></section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"React","description":"Самая востребованная библиотека интерфейсов — компоненты, состояние, хуки, рендеринг и экосистема.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/frontend/react/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"События","description":"Обработчики событий, передача колбэков детям и синтетические события.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/react/events/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 
 <section id="access" class="access">
   <div class="wrap">

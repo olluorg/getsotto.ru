@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Формы в React — карта «Frontend-разработчик»</title>
-<meta name="description" content="Контролируемые и неконтролируемые поля, валидация, библиотеки форм.">
-<link rel="canonical" href="https://getsotto.ru/roadmap/frontend/react-forms/">
+<title>Тестирование React — карта «React»</title>
+<meta name="description" content="Testing Library, тесты хуков и сквозные сценарии.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/react/testing/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:url" content="https://getsotto.ru/roadmap/frontend/react-forms/">
-<meta property="og:title" content="Формы в React — карта «Frontend-разработчик»">
-<meta property="og:description" content="Контролируемые и неконтролируемые поля, валидация, библиотеки форм.">
+<meta property="og:url" content="https://getsotto.ru/roadmap/react/testing/">
+<meta property="og:title" content="Тестирование React — карта «React»">
+<meta property="og:description" content="Testing Library, тесты хуков и сквозные сценарии.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,20 +45,21 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#frameworks">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/frameworks/">Фреймворк</a> <span>/</span> <a href="/roadmap/frontend/react/">React</a> <span>/</span> <span>Формы в React</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#frameworks"},{"@type":"ListItem","position":3,"name":"Фреймворк","item":"https://getsotto.ru/roadmap/frontend/frameworks/"},{"@type":"ListItem","position":4,"name":"React","item":"https://getsotto.ru/roadmap/frontend/react/"},{"@type":"ListItem","position":5,"name":"Формы в React"}]}</script>
-  <h1>Формы в React</h1>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#testing">React</a> <span>/</span> <span>Тестирование React</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#testing"},{"@type":"ListItem","position":4,"name":"Тестирование React"}]}</script>
+  <h1>Тестирование React</h1>
   <div class="chips"><span class="rm-kind k-core">Основа</span></div>
-  <p class="lead">Контролируемые и неконтролируемые поля, валидация, библиотеки форм.</p>
-  <article class="md"><p><b>Контролируемое</b> поле: значение в state, каждое нажатие проходит через React. <b>Неконтролируемое</b>: значение хранит DOM, читаем по <code>ref</code> или из <code>FormData</code> при отправке.</p>
-<pre class="lang-jsx"><code>const [email, setEmail] = useState(&quot;&quot;);
-&lt;input value={email} onChange={(e) =&gt; setEmail(e.target.value)} /&gt;</code></pre>
+  <p class="lead">Testing Library, тесты хуков и сквозные сценарии.</p>
+  <article class="md"><p>Компоненты тестируют <b>как пользователь</b>: найти кнопку по роли и подписи, нажать, проверить видимый результат. Внутреннее состояние и число рендеров не проверяют.</p>
+<pre class="lang-jsx"><code>render(&lt;Counter /&gt;);
+await userEvent.click(screen.getByRole(&quot;button&quot;, { name: /нажато/i }));
+expect(screen.getByRole(&quot;button&quot;)).toHaveTextContent(&quot;Нажато 1&quot;);</code></pre>
 <h3>Что важно знать</h3>
-<ul><li>Контролируемые удобны для мгновенной валидации и зависимых полей, но большая форма перерисовывается на каждый символ.</li><li><b>React Hook Form</b> использует неконтролируемые поля и подписки — быстро и мало кода; со схемой <b>Zod</b> валидация описывается один раз и даёт типы.</li><li>Действия форм React 19 (<code>action</code>, <code>useActionState</code>) — отправка без ручного управления состоянием загрузки.</li><li>Доступность: подписи, сообщения об ошибках, связанные через <code>aria-describedby</code>, фокус на первом ошибочном поле.</li></ul></article>
-  <section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/frontend/controlled-uncontrolled/">Чем контролируемый компонент формы отличается от неконтролируемого?</a> <span class="lvl lvl-junior">Junior</span><p>Контролируемый — значение поля хранится в состоянии React (value + onChange): React — единственный источник истины, легко валидировать и форматировать на лету. Неконтролируемый …</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react-hook-form.com/get-started" rel="noopener" target="_blank">React Hook Form ↗</a></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/frontend/react-state-management/">← Управление состоянием</a><a class="next" href="/roadmap/frontend/routing/">Маршрутизация →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#frameworks">← Вся карта «Frontend-разработчик»</a></p>
+<ul><li>Стек: Vitest (или Jest) + React Testing Library + user-event.</li><li>Сеть — через MSW: те же обработчики работают в тестах и в разработке.</li><li>Компоненты с провайдерами (роутер, кэш запросов, тема) — общая функция <code>renderWithProviders</code>.</li><li>Хуки — <code>renderHook</code>.</li><li>Сквозные сценарии — Playwright.</li></ul></article>
+  <section class="block"><h2>Темы этапа</h2><ul class="links"><li><a href="/roadmap/frontend/unit-component-tests/">Юнит-тесты и тесты компонентов</a> <span class="rm-kind k-core">Основа</span><p>Vitest и Testing Library — проверять поведение, а не реализацию.</p></li><li><a href="/roadmap/frontend/e2e-tests/">Сквозные тесты — Playwright</a> <span class="rm-kind k-core">Основа</span><p>Сценарии в настоящем браузере — вход, оформление заказа, оплата.</p></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/frontend/css-architecture/">← Организация стилей — БЭМ, CSS Modules, Tailwind</a><a class="next" href="/roadmap/frontend/unit-component-tests/">Юнит-тесты и тесты компонентов →</a></nav>
+  <p class="rm-back"><a href="/roadmap/react/#testing">← Вся карта «React»</a></p>
 </div></section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Формы в React","description":"Контролируемые и неконтролируемые поля, валидация, библиотеки форм.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/frontend/react-forms/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Тестирование React","description":"Testing Library, тесты хуков и сквозные сценарии.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/react/testing/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 
 <section id="access" class="access">
   <div class="wrap">

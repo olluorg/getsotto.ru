@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Хуки — карта «Frontend-разработчик»</title>
-<meta name="description" content="useState, useEffect, useRef, useMemo и правила, по которым они работают.">
-<link rel="canonical" href="https://getsotto.ru/roadmap/frontend/react-hooks/">
+<title>Стили в React — карта «React»</title>
+<meta name="description" content="CSS Modules, Tailwind, CSS-in-JS и UI-библиотеки компонентов.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/react/styling/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:url" content="https://getsotto.ru/roadmap/frontend/react-hooks/">
-<meta property="og:title" content="Хуки — карта «Frontend-разработчик»">
-<meta property="og:description" content="useState, useEffect, useRef, useMemo и правила, по которым они работают.">
+<meta property="og:url" content="https://getsotto.ru/roadmap/react/styling/">
+<meta property="og:title" content="Стили в React — карта «React»">
+<meta property="og:description" content="CSS Modules, Tailwind, CSS-in-JS и UI-библиотеки компонентов.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,23 +45,19 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#frameworks">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/frameworks/">Фреймворк</a> <span>/</span> <a href="/roadmap/frontend/react/">React</a> <span>/</span> <span>Хуки</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#frameworks"},{"@type":"ListItem","position":3,"name":"Фреймворк","item":"https://getsotto.ru/roadmap/frontend/frameworks/"},{"@type":"ListItem","position":4,"name":"React","item":"https://getsotto.ru/roadmap/frontend/react/"},{"@type":"ListItem","position":5,"name":"Хуки"}]}</script>
-  <h1>Хуки</h1>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#styling">React</a> <span>/</span> <span>Стили в React</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#styling"},{"@type":"ListItem","position":4,"name":"Стили в React"}]}</script>
+  <h1>Стили в React</h1>
   <div class="chips"><span class="rm-kind k-core">Основа</span></div>
-  <p class="lead">useState, useEffect, useRef, useMemo и правила, по которым они работают.</p>
-  <article class="md"><p>React хранит состояние хуков по <b>порядку вызова</b> в компоненте — поэтому хуки вызывают только на верхнем уровне, не в условиях и циклах.</p>
-<div class="table"><table><thead><tr><th>хук</th><th>для чего</th></tr></thead><tbody><tr><td><code>useState</code></td><td>состояние</td></tr><tr><td><code>useEffect</code></td><td>синхронизация с внешним миром: подписки, таймеры, запросы</td></tr><tr><td><code>useRef</code></td><td>изменяемое значение без перерисовки, ссылка на DOM</td></tr><tr><td><code>useMemo</code>, <code>useCallback</code></td><td>запомнить вычисление или функцию между рендерами</td></tr><tr><td><code>useContext</code></td><td>данные из контекста</td></tr><tr><td><code>useReducer</code></td><td>сложное состояние с действиями</td></tr></tbody></table></div>
-<pre class="lang-jsx"><code>useEffect(() =&gt; {
-  const id = setInterval(tick, 1000);
-  return () =&gt; clearInterval(id);     // очистка
-}, [tick]);</code></pre>
+  <p class="lead">CSS Modules, Tailwind, CSS-in-JS и UI-библиотеки компонентов.</p>
+  <article class="md"><p>React не диктует способ стилизации — выбор за проектом.</p>
+<div class="table"><table><thead><tr><th>способ</th><th>когда</th></tr></thead><tbody><tr><td>CSS Modules</td><td>изолированные классы, обычный CSS, без рантайма</td></tr><tr><td>Tailwind</td><td>быстрая вёрстка утилитами, единая дизайн-система</td></tr><tr><td>CSS-in-JS (styled-components, Emotion)</td><td>старые проекты, динамические стили из props</td></tr><tr><td>UI-библиотеки (MUI, Ant Design, shadcn/ui, Mantine)</td><td>готовые доступные компоненты</td></tr></tbody></table></div>
 <h3>Что важно знать</h3>
-<ul><li>Массив зависимостей должен содержать все используемые значения; пустой массив — эффект один раз после монтирования.</li><li>Эффект — не место для вычисления данных из props: это делают при рендере.</li><li>В режиме разработки StrictMode монтирует компонент дважды, чтобы поймать эффекты без очистки.</li><li>Свои хуки (<code>useDebounce</code>, <code>useMediaQuery</code>) выносят повторяющуюся логику.</li></ul></article>
-  <section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/frontend/react-hooks-rules/">Какие правила хуков в React и почему их нельзя вызывать в условиях?</a> <span class="lvl lvl-junior">Junior</span><p>Хуки вызывают только на верхнем уровне компонента или своего хука — не в условиях, циклах и вложенных функциях — и только из React-функций. Причина: React хранит состояние хуков…</p></li><li><a href="/questions/frontend/react-useeffect/">Как работает useEffect и что такое массив зависимостей?</a> <span class="lvl lvl-junior">Junior</span><p>useEffect запускает побочный эффект после отрисовки: подписки, таймеры, запросы, синхронизацию с внешней системой. Зависимости определяют, когда эффект перезапускается: [] — один…</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/you-might-not-need-an-effect" rel="noopener" target="_blank">react.dev: Вам может не понадобиться эффект ↗</a></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/frontend/react-components/">← Компоненты, props и state</a><a class="next" href="/roadmap/frontend/react-rendering/">Рендеринг и производительность React →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#frameworks">← Вся карта «Frontend-разработчик»</a></p>
+<ul><li>CSS-in-JS с рантаймом плохо сочетается с серверными компонентами — новые проекты чаще берут CSS Modules или Tailwind.</li><li>shadcn/ui — не зависимость, а копируемые в проект компоненты на Radix и Tailwind: полный контроль над кодом.</li><li>Условные классы — утилита <code>clsx</code>.</li><li>Общие токены (цвета, отступы) — в CSS-переменных, чтобы тема менялась без перерисовки React.</li></ul></article>
+  <section class="block"><h2>Темы этапа</h2><ul class="links"><li><a href="/roadmap/frontend/css-architecture/">Организация стилей — БЭМ, CSS Modules, Tailwind</a> <span class="rm-kind k-core">Основа</span><p>Как не утонуть в стилях большого проекта — соглашения об именах, изоляция и утилитарный подход.</p></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/react/routing/">← Маршрутизация</a><a class="next" href="/roadmap/frontend/css-architecture/">Организация стилей — БЭМ, CSS Modules, Tailwind →</a></nav>
+  <p class="rm-back"><a href="/roadmap/react/#styling">← Вся карта «React»</a></p>
 </div></section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Хуки","description":"useState, useEffect, useRef, useMemo и правила, по которым они работают.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/frontend/react-hooks/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Стили в React","description":"CSS Modules, Tailwind, CSS-in-JS и UI-библиотеки компонентов.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/react/styling/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 
 <section id="access" class="access">
   <div class="wrap">

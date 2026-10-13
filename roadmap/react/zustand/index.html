@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Маршрутизация — карта «Frontend-разработчик»</title>
-<meta name="description" content="Несколько страниц в одностраничном приложении — React Router, вложенные маршруты, загрузка данных.">
-<link rel="canonical" href="https://getsotto.ru/roadmap/frontend/routing/">
+<title>Zustand — карта «React»</title>
+<meta name="description" content="Минималистичное глобальное хранилище на хуках.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/react/zustand/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:url" content="https://getsotto.ru/roadmap/frontend/routing/">
-<meta property="og:title" content="Маршрутизация — карта «Frontend-разработчик»">
-<meta property="og:description" content="Несколько страниц в одностраничном приложении — React Router, вложенные маршруты, загрузка данных.">
+<meta property="og:url" content="https://getsotto.ru/roadmap/react/zustand/">
+<meta property="og:title" content="Zustand — карта «React»">
+<meta property="og:description" content="Минималистичное глобальное хранилище на хуках.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,18 +45,23 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#frameworks">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/frameworks/">Фреймворк</a> <span>/</span> <a href="/roadmap/frontend/react/">React</a> <span>/</span> <span>Маршрутизация</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#frameworks"},{"@type":"ListItem","position":3,"name":"Фреймворк","item":"https://getsotto.ru/roadmap/frontend/frameworks/"},{"@type":"ListItem","position":4,"name":"React","item":"https://getsotto.ru/roadmap/frontend/react/"},{"@type":"ListItem","position":5,"name":"Маршрутизация"}]}</script>
-  <h1>Маршрутизация</h1>
-  <div class="chips"><span class="rm-kind k-core">Основа</span></div>
-  <p class="lead">Несколько страниц в одностраничном приложении — React Router, вложенные маршруты, загрузка данных.</p>
-  <article class="md"><p>Одностраничное приложение (SPA) меняет адрес через History API без перезагрузки страницы, а маршрутизатор решает, какой компонент показать.</p>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#state-management">React</a> <span>/</span> <a href="/roadmap/react/state-management/">Управление состоянием</a> <span>/</span> <span>Zustand</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#state-management"},{"@type":"ListItem","position":4,"name":"Управление состоянием","item":"https://getsotto.ru/roadmap/react/state-management/"},{"@type":"ListItem","position":5,"name":"Zustand"}]}</script>
+  <h1>Zustand</h1>
+  <div class="chips"><span class="rm-kind k-alternative">Альтернатива</span></div>
+  <p class="lead">Минималистичное глобальное хранилище на хуках.</p>
+  <article class="md"><pre class="lang-js"><code>const useCart = create((set) =&gt; ({
+  items: [],
+  add: (item) =&gt; set((s) =&gt; ({ items: [...s.items, item] })),
+}));
+
+const count = useCart((s) =&gt; s.items.length);   // подписка на часть состояния</code></pre>
 <h3>Что важно знать</h3>
-<ul><li>Маршруты, параметры (<code>/orders/:id</code>), вложенные маршруты с общим каркасом, страница 404.</li><li>Навигация ссылками (<code>&lt;Link&gt;</code>), а не <code>onClick</code> с переходом — иначе ломаются открытие в новой вкладке и доступность.</li><li>Защищённые маршруты: проверка авторизации и перенаправление на вход.</li><li>Загрузка данных до показа страницы (loaders) убирает «водопад» запросов из эффектов.</li><li>Разделение кода по маршрутам: <code>lazy(() =&gt; import(&quot;./Orders&quot;))</code>.</li><li>Состояние фильтров и пагинации — в параметрах адреса: ссылкой можно поделиться, кнопка «назад» работает.</li><li>В Next.js маршруты задаются структурой файлов.</li></ul></article>
-  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://reactrouter.com/start/framework/installation" rel="noopener" target="_blank">React Router ↗</a></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/frontend/react-forms/">← Формы в React</a><a class="next" href="/roadmap/frontend/vue/">Vue →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#frameworks">← Вся карта «Frontend-разработчик»</a></p>
+<ul><li>Хранилище — хук; не нужен провайдер, мало кода.</li><li>Селектор в хуке ограничивает перерисовки нужной частью состояния.</li><li>Хорош для небольших и средних приложений; для серверных данных всё равно лучше TanStack Query.</li><li>Другие легковесные варианты — Jotai (атомы), MobX (наблюдаемые объекты).</li></ul></article>
+  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://zustand.docs.pmnd.rs/learn/getting-started/introduction" rel="noopener" target="_blank">Zustand ↗</a></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/react/redux-toolkit/">← Redux Toolkit</a><a class="next" href="/roadmap/react/forms/">Формы в React →</a></nav>
+  <p class="rm-back"><a href="/roadmap/react/#state-management">← Вся карта «React»</a></p>
 </div></section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Маршрутизация","description":"Несколько страниц в одностраничном приложении — React Router, вложенные маршруты, загрузка данных.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/frontend/routing/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Zustand","description":"Минималистичное глобальное хранилище на хуках.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/react/zustand/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 
 <section id="access" class="access">
   <div class="wrap">

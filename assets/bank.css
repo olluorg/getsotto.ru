@@ -162,3 +162,5 @@ ol.links.prep li p { color: var(--faint); font-size: 14px; margin-top: 4px; }
   .rm-group, .rm-side.l .rm-group, .rm-side.r .rm-group { align-items: stretch; }
   .rm-side.l .rm-subs, .rm-side.r .rm-subs { align-items: stretch; padding: 0 0 0 14px; border-right: 0; border-left: 2px solid rgba(184, 164, 255, .3); }
 }
+.rm-node.map { border: 1px solid var(--accent-2); background: rgba(150, 118, 255, .16); font-weight: 700; }
+.rm-node.map small { display: block; font-size: 11px; font-weight: 600; color: var(--accent-2); margin-top: 2px; }

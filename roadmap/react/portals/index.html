@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Управление состоянием — карта «Frontend-разработчик»</title>
-<meta name="description" content="Локальное, глобальное и серверное состояние — Context, Redux Toolkit, Zustand, TanStack Query.">
-<link rel="canonical" href="https://getsotto.ru/roadmap/frontend/react-state-management/">
+<title>Порталы — карта «React»</title>
+<meta name="description" content="Отрисовка модальных окон и подсказок вне родительского DOM-узла.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/react/portals/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:url" content="https://getsotto.ru/roadmap/frontend/react-state-management/">
-<meta property="og:title" content="Управление состоянием — карта «Frontend-разработчик»">
-<meta property="og:description" content="Локальное, глобальное и серверное состояние — Context, Redux Toolkit, Zustand, TanStack Query.">
+<meta property="og:url" content="https://getsotto.ru/roadmap/react/portals/">
+<meta property="og:title" content="Порталы — карта «React»">
+<meta property="og:description" content="Отрисовка модальных окон и подсказок вне родительского DOM-узла.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,19 +45,19 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#frameworks">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/frameworks/">Фреймворк</a> <span>/</span> <a href="/roadmap/frontend/react/">React</a> <span>/</span> <span>Управление состоянием</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#frameworks"},{"@type":"ListItem","position":3,"name":"Фреймворк","item":"https://getsotto.ru/roadmap/frontend/frameworks/"},{"@type":"ListItem","position":4,"name":"React","item":"https://getsotto.ru/roadmap/frontend/react/"},{"@type":"ListItem","position":5,"name":"Управление состоянием"}]}</script>
-  <h1>Управление состоянием</h1>
-  <div class="chips"><span class="rm-kind k-core">Основа</span></div>
-  <p class="lead">Локальное, глобальное и серверное состояние — Context, Redux Toolkit, Zustand, TanStack Query.</p>
-  <article class="md"><p>Первое правило — разделить состояние по природе:</p>
-<div class="table"><table><thead><tr><th>вид</th><th>пример</th><th>инструмент</th></tr></thead><tbody><tr><td>локальное</td><td>открыт ли выпадающий список</td><td><code>useState</code></td></tr><tr><td>общее клиентское</td><td>тема, корзина, авторизация</td><td>Context, Zustand, Redux Toolkit</td></tr><tr><td>серверное</td><td>список заказов</td><td>TanStack Query, RTK Query, SWR</td></tr><tr><td>в адресе</td><td>фильтры, номер страницы</td><td>параметры URL</td></tr><tr><td>формы</td><td>поля и ошибки</td><td>React Hook Form</td></tr></tbody></table></div>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#rendering">React</a> <span>/</span> <a href="/roadmap/react/rendering/">Рендеринг и производительность React</a> <span>/</span> <span>Порталы</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#rendering"},{"@type":"ListItem","position":4,"name":"Рендеринг и производительность React","item":"https://getsotto.ru/roadmap/react/rendering/"},{"@type":"ListItem","position":5,"name":"Порталы"}]}</script>
+  <h1>Порталы</h1>
+  <div class="chips"><span class="rm-kind k-optional">Полезно знать</span></div>
+  <p class="lead">Отрисовка модальных окон и подсказок вне родительского DOM-узла.</p>
+  <article class="md"><p><code>createPortal(children, domNode)</code> рисует компонент в другом месте DOM — обычно в конце <code>body</code>, — оставляя его в дереве React.</p>
+<pre class="lang-jsx"><code>return createPortal(&lt;div className=&quot;modal&quot;&gt;{children}&lt;/div&gt;, document.body);</code></pre>
 <h3>Что важно знать</h3>
-<ul><li>Большинство «глобального состояния» на деле — <b>кэш серверных данных</b>; специализированные библиотеки дают кэширование, повторы, обновление в фоне и инвалидацию.</li><li><b>Context</b> — передача данных вглубь, а не менеджер состояния: при изменении значения перерисовываются все подписчики.</li><li><b>Redux Toolkit</b> — предсказуемость, devtools, строгая структура; хорош для больших команд. <b>Zustand</b> — минимум кода.</li><li>Не класть всё в глобальное хранилище: чем ближе состояние к месту использования, тем проще код.</li></ul></article>
-  <section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/frontend/react-state-management/">Как управлять состоянием в React-приложении — Context, Redux, Zustand, серверное состояние?</a> <span class="lvl lvl-junior">Junior</span><p>Сначала — локальное состояние и подъём к общему предку. Context — передать редко меняющиеся данные глубоко (тема, пользователь, язык) без прокидывания props. Глобальное хранилище…</p></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/frontend/react-rendering/">← Рендеринг и производительность React</a><a class="next" href="/roadmap/frontend/react-forms/">Формы в React →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#frameworks">← Вся карта «Frontend-разработчик»</a></p>
+<ul><li>Решает проблемы <code>overflow: hidden</code> и <code>z-index</code> у родителей для модальных окон, выпадающих меню и подсказок.</li><li>События из портала всплывают по дереву <b>React</b>, а не DOM: клик в модальном окне дойдёт до обработчика родительского компонента.</li><li>Для модальных окон — также управление фокусом и <code>Escape</code>; нативный <code>&lt;dialog&gt;</code> решает многое из коробки.</li></ul></article>
+  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/reference/react-dom/createPortal" rel="noopener" target="_blank">react.dev: createPortal ↗</a></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/react/error-boundaries/">← Границы ошибок</a><a class="next" href="/roadmap/react/state-management/">Управление состоянием →</a></nav>
+  <p class="rm-back"><a href="/roadmap/react/#rendering">← Вся карта «React»</a></p>
 </div></section>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Управление состоянием","description":"Локальное, глобальное и серверное состояние — Context, Redux Toolkit, Zustand, TanStack Query.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/frontend/react-state-management/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Порталы","description":"Отрисовка модальных окон и подсказок вне родительского DOM-узла.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/react/portals/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 
 <section id="access" class="access">
   <div class="wrap">
