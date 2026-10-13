@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как правильно работать с секретами в CI/CD и инфраструктуре? — вопрос с собеседования</title>
+<meta name="description" content="Секреты не хранят в коде, образах и логах. Источник — хранилище секретов (Vault, облачный менеджер, секреты CI), выдача — по минимальным правам и по…">
+<link rel="canonical" href="https://getsotto.ru/questions/devops/ci-secrets/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/devops/ci-secrets/">
+<meta property="og:title" content="Как правильно работать с секретами в CI/CD и инфраструктуре? — вопрос с собеседования">
+<meta property="og:description" content="Секреты не хранят в коде, образах и логах. Источник — хранилище секретов (Vault, облачный менеджер, секреты CI), выдача — по минимальным правам и по…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/devops/">DevOps</a> <span>/</span> <span>Как правильно работать с секретами в CI/CD и инфраструктуре?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"DevOps","item":"https://getsotto.ru/questions/devops/"},{"@type":"ListItem","position":3,"name":"Как правильно работать с секретами в CI/CD и инфраструктуре?"}]}</script>
+  <h1>Как правильно работать с секретами в CI/CD и инфраструктуре?</h1>
+  <div class="chips"><span class="lvl lvl-middle">Middle</span><span class="chip">CI/CD и Git</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Разработчик закоммитил пароль в Git. Что делать?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main">Секреты не хранят в коде, образах и логах. Источник — <b>хранилище секретов</b> (Vault, облачный менеджер, секреты CI), выдача — по <b>минимальным правам</b> и по возможности <b>короткоживущая</b> (OIDC вместо статических ключей облака). Утёкший в Git секрет считается <b>скомпрометированным</b>: сначала <b>отозвать и заменить</b>, потом уже чистить историю.</p><ul><li>Удаление коммита не помогает: история уже у всех, в форках и кэшах</li><li>Сканеры секретов в pre-commit и CI (gitleaks, trufflehog)</li><li>CI маскирует секреты в логах, но echo в base64 или опечатка обходят маску</li></ul><p class="extra"><span>А ещё</span> Секреты из CI не доступны сборкам из форков — иначе любой PR их украдёт</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p><b>Иерархия решений:</b></p>
+<ol><li>Не иметь секрета: OIDC-федерация CI с облаком, workload identity в Kubernetes — временные токены вместо постоянных ключей.</li><li>Короткоживущие динамические секреты (Vault выдаёт пароль к БД на час).</li><li>Статические секреты в хранилище с ротацией и аудитом доступа.</li></ol>
+<p><b>Утечка в Git — порядок действий:</b></p>
+<ol><li>Отозвать ключ, выпустить новый, обновить потребителей.</li><li>Проверить журналы использования ключа.</li><li>Почистить историю (git filter-repo) — для гигиены, а не защиты.</li><li>Добавить сканер, чтобы не повторилось.</li></ol>
+<p><b>Частые ошибки:</b> <code>.env</code> в репозитории, секреты в <code>ARG</code> Dockerfile, вывод переменных окружения в логи при отладке, один общий ключ на всё, self-hosted раннер с доступом к проду, на котором запускаются чужие PR.</p></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Хранилище и минимальные права, короткоживущие учётные данные.</li><li>Правильная реакция на утечку.</li><li>Профилактика: сканеры, маски, изоляция раннеров.</li></ul></div></section>
+  
+  
+  
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/devops/k8s-config-secrets/">Как передать конфигурацию и секреты приложению в Kubernetes?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/devops/ci-cd-pipeline/">Из каких этапов состоит CI/CD-пайплайн и чем continuous delivery отличается от continuous deployment?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/devops/container-security/">Как сделать контейнер безопаснее?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Как правильно работать с секретами в CI/CD и инфраструктуре?","acceptedAnswer":{"@type":"Answer","text":"Секреты не хранят в коде, образах и логах. Источник — хранилище секретов (Vault, облачный менеджер, секреты CI), выдача — по минимальным правам и по возможности короткоживущая (OIDC вместо статических ключей облака). Утёкший в Git секрет считается скомпрометированным: сначала отозвать и заменить, потом уже чистить историю. Удаление коммита не помогает: история уже у всех, в форках и кэшах Сканеры секретов в pre-commit и CI (gitleaks, trufflehog) CI маскирует секреты в логах, но echo в base64 или опечатка обходят маску Секреты из CI не доступны сборкам из форков — иначе любой PR их украдёт Иерархия решений: 1. Не иметь секрета: OIDC-федерация CI с облаком, workload identity в Kubernetes — временные токены вместо постоянных ключей. 2. Короткоживущие динамические секреты (Vault выдаёт пароль к БД на час). 3. Статические секреты в хранилище с ротацией и аудитом доступа. Утечка в Git — порядок действий: 1. Отозвать ключ, выпустить новый, обновить потребителей. 2. Проверить журналы использования ключа. 3. Почистить историю (git filter-repo) — для гигиены, а не защиты. 4. Добавить сканер, чтобы не повторилось. Частые ошибки: .env в репозитории, секреты в ARG Dockerfile, вывод переменных окружения в логи при отладке, один общий ключ на всё, self-hosted раннер с доступом к проду, на котором запускаются чужие PR."}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>
