@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Что такое self и __init__ в классе? — вопрос с собеседования</title>
+<meta name="description" content="self — ссылка на текущий экземпляр, Python передаёт её в метод первым аргументом. __init__ — инициализатор: заполняет уже созданный объект Создаёт…">
+<link rel="canonical" href="https://getsotto.ru/questions/python/class-self-init/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/python/class-self-init/">
+<meta property="og:title" content="Что такое self и __init__ в классе? — вопрос с собеседования">
+<meta property="og:description" content="self — ссылка на текущий экземпляр, Python передаёт её в метод первым аргументом. __init__ — инициализатор: заполняет уже созданный объект Создаёт…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/python/">Python</a> <span>/</span> <span>Что такое self и __init__ в классе?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Python","item":"https://getsotto.ru/questions/python/"},{"@type":"ListItem","position":3,"name":"Что такое self и __init__ в классе?"}]}</script>
+  <h1>Что такое self и __init__ в классе?</h1>
+  <div class="chips"><span class="lvl lvl-junior">Junior</span><span class="chip">ООП</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Зачем нужен self?</li><li>Является ли __init__ конструктором?</li><li>Чем атрибут класса отличается от атрибута экземпляра?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main"><code>self</code> — ссылка на <b>текущий экземпляр</b>, Python передаёт её в метод первым аргументом.</p><ul><li><code>__init__</code> — инициализатор: заполняет уже созданный объект</li><li>Создаёт объект <code>__new__</code>, его переопределяют редко</li></ul><p class="extra"><span>А ещё</span> Атрибуты класса общие для всех экземпляров — осторожно с изменяемыми</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p>Метод — функция, объявленная в классе. При вызове <code>obj.method(1)</code> Python фактически вызывает <code>Class.method(obj, 1)</code>: экземпляр передаётся первым аргументом. По соглашению его называют <code>self</code>. Через <code>self</code> метод читает и пишет атрибуты конкретного объекта.</p>
+<p>Создание объекта <code>User(&quot;Аня&quot;)</code> идёт в два шага:</p>
+<ol><li><code>__new__</code> создаёт пустой объект нужного класса;</li><li><code>__init__</code> получает этот объект как <code>self</code> и заполняет атрибуты.</li></ol>
+<p>Поэтому <code>__init__</code> точнее называть инициализатором. <code>__new__</code> переопределяют, когда нужно управлять созданием: неизменяемые типы (наследники <code>int</code>, <code>tuple</code>), синглтоны.</p>
+<p><b>Атрибуты класса и экземпляра.</b> Переменная в теле класса — общая для всех экземпляров. Переменная через <code>self.x = ...</code> — своя у каждого. Если атрибут класса — список, и экземпляры его меняют, изменения увидят все.</p>
+<p>Для простых классов-хранилищ данных удобен <code>@dataclass</code>: он сам генерирует <code>__init__</code>, <code>__repr__</code> и <code>__eq__</code>.</p></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-python"><code>class User:
+    count = 0                  # атрибут класса — общий
+
+    def __init__(self, name):
+        self.name = name       # атрибут экземпляра — свой
+        User.count += 1
+
+    def greet(self):
+        return f&quot;Привет, {self.name}&quot;
+
+u = User(&quot;Аня&quot;)
+u.greet()             # то же, что User.greet(u)
+
+class Bad:
+    tags = []          # один список на всех!
+
+from dataclasses import dataclass, field
+
+@dataclass
+class Good:
+    name: str
+    tags: list = field(default_factory=list)</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li><code>self</code> как явно передаваемый экземпляр, эквивалентность <code>obj.m()</code> и <code>Class.m(obj)</code>.</li><li><code>__init__</code> инициализирует, <code>__new__</code> создаёт.</li><li>Разница атрибутов класса и экземпляра, ловушка с изменяемым атрибутом класса.</li><li>Знание <code>dataclass</code> — плюс.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Называть <code>__init__</code> конструктором без оговорки.</li><li>Объявить список в теле класса вместо <code>__init__</code>.</li></ul></div></section>
+  
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="links"><li><a href="/questions/python/inheritance-super-mro/">Как работают наследование, super() и MRO?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/python/staticmethod-classmethod/">Чем @staticmethod отличается от @classmethod?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/python/property/">Что такое @property и зачем он нужен?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/python/dunder-str-repr/">Что такое магические методы? Чем __str__ отличается от __repr__?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Что такое self и __init__ в классе?","acceptedAnswer":{"@type":"Answer","text":"self — ссылка на текущий экземпляр, Python передаёт её в метод первым аргументом. __init__ — инициализатор: заполняет уже созданный объект Создаёт объект __new__, его переопределяют редко Атрибуты класса общие для всех экземпляров — осторожно с изменяемыми Метод — функция, объявленная в классе. При вызове obj.method(1) Python фактически вызывает Class.method(obj, 1): экземпляр передаётся первым аргументом. По соглашению его называют self. Через self метод читает и пишет атрибуты конкретного объекта. Создание объекта User(\"Аня\") идёт в два шага: 1. __new__ создаёт пустой объект нужного класса; 2. __init__ получает этот объект как self и заполняет атрибуты. Поэтому __init__ точнее называть инициализатором. __new__ переопределяют, когда нужно управлять созданием: неизменяемые типы (наследники int, tuple), синглтоны. Атрибуты класса и экземпляра. Переменная в теле класса — общая для всех экземпляров. Переменная через self.x = ... — своя у каждого. Если атрибут класса — список, и экземпляры его меняют, изменения увидят все. Для простых классов-хранилищ данных удобен @dataclass: он сам генерирует __init__, __repr__ и __eq__."}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

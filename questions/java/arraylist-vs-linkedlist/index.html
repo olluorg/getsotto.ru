@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чем ArrayList отличается от LinkedList и что брать по умолчанию? — вопрос с собеседования</title>
+<meta name="description" content="ArrayList — динамический массив: доступ по индексу O(1), добавление в конец амортизированно O(1). LinkedList — двусвязный список: O(1) только при…">
+<link rel="canonical" href="https://getsotto.ru/questions/java/arraylist-vs-linkedlist/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/java/arraylist-vs-linkedlist/">
+<meta property="og:title" content="Чем ArrayList отличается от LinkedList и что брать по умолчанию? — вопрос с собеседования">
+<meta property="og:description" content="ArrayList — динамический массив: доступ по индексу O(1), добавление в конец амортизированно O(1). LinkedList — двусвязный список: O(1) только при…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/java/">Java</a> <span>/</span> <span>Чем ArrayList отличается от LinkedList и что брать по умолчанию?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Java","item":"https://getsotto.ru/questions/java/"},{"@type":"ListItem","position":3,"name":"Чем ArrayList отличается от LinkedList и что брать по умолчанию?"}]}</script>
+  <h1>Чем ArrayList отличается от LinkedList и что брать по умолчанию?</h1>
+  <div class="chips"><span class="lvl lvl-junior">Junior</span><span class="chip">Коллекции</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Когда использовать LinkedList?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main"><b>ArrayList</b> — динамический массив: доступ по индексу O(1), добавление в конец амортизированно O(1). <b>LinkedList</b> — двусвязный список: O(1) только при вставке или удалении у уже известного узла. По умолчанию — <b>ArrayList</b>.</p><ul><li>Поиск позиции в LinkedList — O(n), поэтому add(i, x) линейный у обоих</li><li>ArrayList компактнее и дружелюбнее к кэшу процессора — почти всегда быстрее на практике</li><li>Для очереди и стека — ArrayDeque, а не LinkedList</li></ul><p class="extra"><span>А ещё</span> LinkedList оправдан редко: много вставок через ListIterator в середину огромного списка</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  <section class="block widget"><h2>Попробуйте сами</h2><p class="hint">Сколько раз ArrayList копирует массив</p><script type="module" src="/widgets/arraylist-growth.js"></script><sotto-arraylist-growth theme="dark"></sotto-arraylist-growth></section>
+  <section class="block"><h2>Подробно</h2><div class="md"><p><b>ArrayList</b> хранит элементы в массиве. <code>get(i)</code> — прямой доступ O(1). <code>add(e)</code> в конец — O(1) амортизированно: когда массив заполнен, он растёт в 1,5 раза с копированием, но копирования редки. Вставка и удаление в середине — O(n): сдвиг хвоста через <code>System.arraycopy</code> (быстрый блочный сдвиг памяти).</p>
+<p><b>LinkedList</b> — двусвязный список узлов <code>{prev, item, next}</code>. <code>get(i)</code> — O(n): обход от ближайшего конца. Вставка и удаление — O(1), <b>если узел уже найден</b> (через <code>ListIterator</code>) или это края списка. <code>add(i, x)</code> по индексу сначала ищет позицию — O(n).</p>
+<p><b>Почему ArrayList почти всегда выигрывает:</b></p>
+<ul><li>элементы массива лежат подряд — процессор подгружает их в кэш блоками, а узлы LinkedList разбросаны по куче — промах кэша на каждом шаге;</li><li>каждый узел — отдельный объект с заголовком и двумя ссылками: в разы больше памяти и работы сборщику;</li><li>сдвиг массива <code>arraycopy</code> очень быстрый даже на тысячах элементов.</li></ul>
+<p><b>Когда LinkedList:</b> в новом коде — почти никогда. Для очередей и стеков есть <code>ArrayDeque</code> (кольцевой массив). Исключение — частые вставки и удаления в середине при обходе итератором огромного списка, и то стоит измерить.</p></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Устройство обеих реализаций.</li><li>Сложность доступа, вставки в конец и в середину.</li><li>Почему на практике ArrayList быстрее: кэш и память.</li><li>ArrayDeque для очередей.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>«LinkedList быстрее для вставки в середину» без учёта поиска позиции.</li><li>Использовать LinkedList как очередь вместо ArrayDeque.</li></ul></div></section>
+  <section class="block quiz"><h2>Проверьте себя</h2><p class="hint">Один верный вариант. Подумайте, потом откройте ответ.</p><details><summary>Показать варианты и ответ</summary><ul><li class="ok"><span class="mark">✓</span>ArrayList — массив (индекс O(1)), берут по умолчанию; LinkedList — двусвязный список (индекс O(n)), почти всегда хуже из-за кэша</li><li class="no"><span class="mark">✗</span>LinkedList быстрее во всём, его и берут по умолчанию</li><li class="no"><span class="mark">✗</span>ArrayList не умеет расти, LinkedList — динамический</li><li class="no"><span class="mark">✗</span>Они одинаковы по производительности</li></ul></details></section>
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="plainlist"><li>Как растёт ArrayList при добавлении?</li><li>Когда LinkedList реально оправдан?</li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/java/jc-154/">Почему утверждение «вставка в середину LinkedList работает за O(1)» вводит в заблуждение?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/java/jc-155/">Почему ArrayList обычно обходит LinkedList даже там, где асимптотика формально в пользу связного списка?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/cs/array-vs-linked-list/">Чем массив отличается от связного списка?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Чем ArrayList отличается от LinkedList и что брать по умолчанию?","acceptedAnswer":{"@type":"Answer","text":"ArrayList — динамический массив: доступ по индексу O(1), добавление в конец амортизированно O(1). LinkedList — двусвязный список: O(1) только при вставке или удалении у уже известного узла. По умолчанию — ArrayList. Поиск позиции в LinkedList — O(n), поэтому add(i, x) линейный у обоих ArrayList компактнее и дружелюбнее к кэшу процессора — почти всегда быстрее на практике Для очереди и стека — ArrayDeque, а не LinkedList LinkedList оправдан редко: много вставок через ListIterator в середину огромного списка ArrayList хранит элементы в массиве. get(i) — прямой доступ O(1). add(e) в конец — O(1) амортизированно: когда массив заполнен, он растёт в 1,5 раза с копированием, но копирования редки. Вставка и удаление в середине — O(n): сдвиг хвоста через System.arraycopy (быстрый блочный сдвиг памяти). LinkedList — двусвязный список узлов {prev, item, next}. get(i) — O(n): обход от ближайшего конца. Вставка и удаление — O(1), если узел уже найден (через ListIterator) или это края списка. add(i, x) по индексу сначала ищет позицию — O(n). Почему ArrayList почти всегда выигрывает: - элементы массива лежат подряд — процессор подгружает их в кэш блоками, а узлы LinkedList разбросаны по куче — промах кэша на каждом шаге; - каждый узел — отдельный объект с заголовком и двумя ссылками: в разы больше памяти и работы сборщику; - сдвиг массива arraycopy очень быстрый даже на тысячах элементов. Когда…"}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

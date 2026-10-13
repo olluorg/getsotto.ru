@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Нагрузка превысила возможности сервиса. Какие приёмы позволяют деградировать управляемо, а не упасть целиком? — вопрос с собеседования</title>
+<meta name="description" content="Частичный отказ лучше полного: сбрасывать лишнюю нагрузку, отключать второстепенное, отдавать устаревшие данные. Сброс нагрузки — быстрый отказ части…">
+<link rel="canonical" href="https://getsotto.ru/questions/system-design/graceful-degradation/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/system-design/graceful-degradation/">
+<meta property="og:title" content="Нагрузка превысила возможности сервиса. Какие приёмы позволяют деградировать управляемо, а не упасть целиком? — вопрос с собеседования">
+<meta property="og:description" content="Частичный отказ лучше полного: сбрасывать лишнюю нагрузку, отключать второстепенное, отдавать устаревшие данные. Сброс нагрузки — быстрый отказ части…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/system-design/">System design</a> <span>/</span> <span>Нагрузка превысила возможности сервиса. Какие приёмы позволяют деградировать управляемо, а не упасть целиком?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"System design","item":"https://getsotto.ru/questions/system-design/"},{"@type":"ListItem","position":3,"name":"Нагрузка превысила возможности сервиса. Какие приёмы позволяют деградировать управляемо, а не упасть целиком?"}]}</script>
+  <h1>Нагрузка превысила возможности сервиса. Какие приёмы позволяют деградировать управляемо, а не упасть целиком?</h1>
+  <div class="chips"><span class="lvl lvl-middle">Middle</span><span class="chip">Надёжность и идемпотентность</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Что делать при перегрузке сервиса?</li><li>Что такое деградация функциональности?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main"><b>Частичный отказ лучше полного</b>: сбрасывать лишнюю нагрузку, отключать второстепенное, отдавать устаревшие данные.</p><ul><li>Сброс нагрузки — быстрый отказ части запросов, пока очереди не выросли</li><li>Рубильники для рекомендаций, персонализации, аналитики — освобождают ресурсы главному</li><li>Устаревшее из кэша лучше, чем ошибка</li></ul><p class="extra"><span>А ещё</span> Увеличение таймаутов и очередей при перегрузке делает только хуже</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p>Ключевая мысль — частичный отказ лучше полного: система, обслуживающая семьдесят процентов запросов, полезнее лежащей целиком. Сброс нагрузки работает потому, что перегруженная система всё равно не выполнит всю работу, а попытка сделать это растягивает очереди и увеличивает задержку до бесполезных значений — быстрый отказ честнее. Отключение второстепенного (рекомендации, персонализация, аналитика) освобождает ресурсы для главного сценария; заранее заведённые рубильники делают это решением одного переключателя. Увеличение таймаутов — противоположный по смыслу шаг: оно удерживает потоки и соединения, ускоряя исчерпание ресурсов и превращая перегрузку в каскадный отказ. Полезно добавить и приоритизацию: платящий пользователь или критичный вызов должны иметь преимущество перед фоновой задачей.</p></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Принцип частичного отказа.</li><li>Конкретные приёмы: сброс нагрузки, отключение второстепенного, устаревшие данные.</li><li>Почему большие таймауты и очереди вредны.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Увеличивать таймауты при перегрузке.</li><li>Отказываться от сброса нагрузки, пытаясь обслужить всех и не обслуживая никого.</li></ul></div></section>
+  <section class="block quiz"><h2>Проверьте себя</h2><p class="hint">Несколько верных вариантов. Подумайте, потом откройте ответ.</p><details><summary>Показать варианты и ответ</summary><ul><li class="ok"><span class="mark">✓</span>Сбрасывать избыточную нагрузку: быстро отклонять часть запросов с 429, сохраняя работоспособность для остальных</li><li class="ok"><span class="mark">✓</span>Отключать второстепенную функциональность, сохраняя ключевой сценарий</li><li class="ok"><span class="mark">✓</span>Отдавать слегка устаревшие данные из кэша вместо обращения к перегруженному источнику</li><li class="no"><span class="mark">✗</span>Увеличивать таймауты, чтобы дождаться ответа перегруженной зависимости</li></ul></details></section>
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="plainlist"><li>Как выбрать, какие запросы отклонять первыми?</li><li>Почему быстрый отказ полезнее долгого ожидания для вызывающего?</li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/highload/load-shedding/">Как сервису пережить нагрузку выше его возможностей?</a> <span class="lvl lvl-senior">Senior</span></li><li><a href="/questions/highload/backpressure/">Что такое backpressure и как его реализовать?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/highload/rate-limiting/">Какие алгоритмы ограничения частоты запросов вы знаете?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Нагрузка превысила возможности сервиса. Какие приёмы позволяют деградировать управляемо, а не упасть целиком?","acceptedAnswer":{"@type":"Answer","text":"Частичный отказ лучше полного: сбрасывать лишнюю нагрузку, отключать второстепенное, отдавать устаревшие данные. Сброс нагрузки — быстрый отказ части запросов, пока очереди не выросли Рубильники для рекомендаций, персонализации, аналитики — освобождают ресурсы главному Устаревшее из кэша лучше, чем ошибка Увеличение таймаутов и очередей при перегрузке делает только хуже Ключевая мысль — частичный отказ лучше полного: система, обслуживающая семьдесят процентов запросов, полезнее лежащей целиком. Сброс нагрузки работает потому, что перегруженная система всё равно не выполнит всю работу, а попытка сделать это растягивает очереди и увеличивает задержку до бесполезных значений — быстрый отказ честнее. Отключение второстепенного (рекомендации, персонализация, аналитика) освобождает ресурсы для главного сценария; заранее заведённые рубильники делают это решением одного переключателя. Увеличение таймаутов — противоположный по смыслу шаг: оно удерживает потоки и соединения, ускоряя исчерпание ресурсов и превращая перегрузку в каскадный отказ. Полезно добавить и приоритизацию: платящий пользователь или критичный вызов должны иметь преимущество перед фоновой задачей."}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

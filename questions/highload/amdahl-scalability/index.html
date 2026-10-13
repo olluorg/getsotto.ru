@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Почему удвоение числа серверов не удваивает пропускную способность? — вопрос с собеседования</title>
+<meta name="description" content="Масштабируется только параллельная часть работы. Закон Амдала: если 5% работы последовательны, ускорение не превысит 20× при любом числе узлов. А…">
+<link rel="canonical" href="https://getsotto.ru/questions/highload/amdahl-scalability/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/highload/amdahl-scalability/">
+<meta property="og:title" content="Почему удвоение числа серверов не удваивает пропускную способность? — вопрос с собеседования">
+<meta property="og:description" content="Масштабируется только параллельная часть работы. Закон Амдала: если 5% работы последовательны, ускорение не превысит 20× при любом числе узлов. А…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/highload/">Highload</a> <span>/</span> <span>Почему удвоение числа серверов не удваивает пропускную способность?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Highload","item":"https://getsotto.ru/questions/highload/"},{"@type":"ListItem","position":3,"name":"Почему удвоение числа серверов не удваивает пропускную способность?"}]}</script>
+  <h1>Почему удвоение числа серверов не удваивает пропускную способность?</h1>
+  <div class="chips"><span class="lvl lvl-senior">Senior</span><span class="chip">Задержка, пропускная способность и очереди</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Что такое закон Амдала?</li><li>Что ограничивает горизонтальное масштабирование?</li><li>Что такое universal scalability law?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main">Масштабируется только параллельная часть работы. <b>Закон Амдала</b>: если 5% работы последовательны, ускорение не превысит 20× при любом числе узлов. А координация между узлами (блокировки, согласование) может даже <b>снижать</b> пропускную способность после некоторого предела.</p><ul><li>Общие узкие места: одна база, одна блокировка, один лидер, общий счётчик</li><li>Universal Scalability Law: к последовательной части добавляется цена согласования, растущая как N²</li><li>Решение — убрать общее: шардирование, локальные кэши, асинхронность, разделение данных</li></ul><p class="extra"><span>А ещё</span> Перед масштабированием найти, во что упираемся: CPU, база, сеть, блокировка</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p><b>Закон Амдала.</b> Пусть доля p работы распараллеливается, а 1 − p — нет. Ускорение на N узлах: S(N) = 1 / ((1 − p) + p / N). При N → ∞ предел 1 / (1 − p). Даже 95% параллельной работы дают максимум 20×.</p>
+<p>В сервисах «последовательная часть» — это всё, что упирается в единственный ресурс:</p>
+<ul><li>одна основная база или один её мастер для записи;</li><li>глобальная блокировка или счётчик (<code>SELECT ... FOR UPDATE</code> по одной строке, sequence, распределённая блокировка);</li><li>единственный лидер в кластере, единственный потребитель партиции;</li><li>общий кэш или очередь, у которых предел по сети или CPU.</li></ul>
+<p><b>Universal Scalability Law</b> (Нил Гюнтер) добавляет к последовательной части <b>когерентность</b> — цену согласования узлов друг с другом: C(N) = N / (1 + α(N − 1) + βN(N − 1)). Когда β &gt; 0, у кривой есть максимум: после него добавление узлов уменьшает пропускную способность. Так ведут себя системы, где каждый узел общается с каждым: синхронная инвалидация кэшей, распределённые блокировки, широковещательные протоколы.</p>
+<p><b>Как это выглядит на практике</b> — добавили серверов приложений, а RPS не вырос, задержка не упала: значит, узкое место не в них. Пул соединений к базе занят, база упирается в CPU или в блокировки на горячих строках.</p>
+<p><b>Что делать:</b></p>
+<ul><li><b>измерить</b> — найти ресурс с очередью (USE: utilization, saturation, errors для каждого ресурса);</li><li><b>уменьшить последовательную часть</b> — шардировать данные, чтобы записи шли в разные узлы; разнести горячие счётчики (шардированные счётчики, агрегирование); заменить синхронное согласование на асинхронное;</li><li><b>уменьшить координацию</b> — локальные решения без кворума там, где это допустимо; пакетирование; кэши с TTL вместо синхронной инвалидации;</li><li><b>читать с реплик</b>, а писать в шарды — разные узкие места для чтения и записи.</li></ul></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-text"><code>Обработка заказа: 40 мс параллелится по серверам, 2 мс — UPDATE счётчика
+остатка под блокировкой одной строки.
+p = 40 / 42 ≈ 0,952 → предел ускорения ≈ 21×.
+Больше ~500 заказов/с на один товар не пропустить никаким числом серверов —
+пока остаток одного товара обновляется под одной блокировкой.</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Формула или смысл закона Амдала и предел ускорения.</li><li>Примеры последовательной части в реальных системах.</li><li>Цена координации, падение после максимума (USL) — для senior.</li><li>Как искать узкое место и как уменьшать общую часть.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Считать, что stateless-сервис масштабируется линейно бесконечно.</li><li>Масштабировать то, что не является узким местом.</li></ul></div></section>
+  
+  
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/highload/queueing-utilization/">Почему при загрузке сервера 90% время ответа растёт в разы, хотя запас ещё есть?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/system-design/more-instances-no-gain/">Сервис работает на двадцати инстансах. Добавление ещё десяти не уменьшает время ответа. Как вы будете искать причину и что предпримете?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/system-design/scale-the-bottleneck/">Сервер приложений загружен на 30% по CPU, но задержки растут, а пул соединений к базе занят полностью. Что даст добавление ещё нескольких серверов приложений?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Почему удвоение числа серверов не удваивает пропускную способность?","acceptedAnswer":{"@type":"Answer","text":"Масштабируется только параллельная часть работы. Закон Амдала: если 5% работы последовательны, ускорение не превысит 20× при любом числе узлов. А координация между узлами (блокировки, согласование) может даже снижать пропускную способность после некоторого предела. Общие узкие места: одна база, одна блокировка, один лидер, общий счётчик Universal Scalability Law: к последовательной части добавляется цена согласования, растущая как N² Решение — убрать общее: шардирование, локальные кэши, асинхронность, разделение данных Перед масштабированием найти, во что упираемся: CPU, база, сеть, блокировка Закон Амдала. Пусть доля p работы распараллеливается, а 1 − p — нет. Ускорение на N узлах: S(N) = 1 / ((1 − p) + p / N). При N → ∞ предел 1 / (1 − p). Даже 95% параллельной работы дают максимум 20×. В сервисах «последовательная часть» — это всё, что упирается в единственный ресурс: - одна основная база или один её мастер для записи; - глобальная блокировка или счётчик (SELECT ... FOR UPDATE по одной строке, sequence, распределённая блокировка); - единственный лидер в кластере, единственный потребитель партиции; - общий кэш или очередь, у которых предел по сети или CPU. Universal Scalability Law (Нил Гюнтер) добавляет к последовательной части когерентность — цену согласования узлов друг с другом: C(N) = N / (1 + α(N − 1) + βN(N − 1)). Когда β > 0, у кривой есть максимум: после него добавление узлов уменьшает пропускную способность. Так ведут себя системы, где каждый узел общается с…"}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

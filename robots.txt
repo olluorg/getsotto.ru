@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://getsotto.ru/sitemap.xml
+Sitemap: https://getsotto.ru/sitemap-bank.xml

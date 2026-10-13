@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Какие битовые операции вы знаете и где они применяются? — вопрос с собеседования</title>
+<meta name="description" content="AND &amp;, OR |, XOR ^, NOT ~, сдвиги &lt;&lt; и &gt;&gt; работают с каждым битом отдельно и стоят один такт. Флаги: поставить x | f, снять x &amp; ~f, проверить x &amp; f…">
+<link rel="canonical" href="https://getsotto.ru/questions/cs/bitwise-ops/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/cs/bitwise-ops/">
+<meta property="og:title" content="Какие битовые операции вы знаете и где они применяются? — вопрос с собеседования">
+<meta property="og:description" content="AND &amp;, OR |, XOR ^, NOT ~, сдвиги &lt;&lt; и &gt;&gt; работают с каждым битом отдельно и стоят один такт. Флаги: поставить x | f, снять x &amp; ~f, проверить x &amp; f…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/cs/">Основы</a> <span>/</span> <span>Какие битовые операции вы знаете и где они применяются?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Основы","item":"https://getsotto.ru/questions/cs/"},{"@type":"ListItem","position":3,"name":"Какие битовые операции вы знаете и где они применяются?"}]}</script>
+  <h1>Какие битовые операции вы знаете и где они применяются?</h1>
+  <div class="chips"><span class="lvl lvl-junior">Junior</span><span class="chip">Числа в компьютере</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Как проверить, что число — степень двойки?</li><li>Как хранить набор флагов в одном числе?</li><li>Почему размер HashMap — степень двойки?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main">AND <code>&amp;</code>, OR <code>|</code>, XOR <code>^</code>, NOT <code>~</code>, сдвиги <code>&lt;&lt;</code> и <code>&gt;&gt;</code> работают с каждым битом отдельно и стоят один такт.</p><ul><li>Флаги: поставить <code>x | f</code>, снять <code>x &amp; ~f</code>, проверить <code>x &amp; f != 0</code></li><li>Степень двойки: <code>x &gt; 0 and x &amp; (x − 1) == 0</code></li><li>Остаток от деления на 2ᵏ: <code>x &amp; (2ᵏ − 1)</code> — так HashMap выбирает корзину</li></ul><p class="extra"><span>А ещё</span> XOR: a ^ a = 0 — поиск непарного элемента, контрольные суммы</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  <section class="block widget"><h2>Попробуйте сами</h2><p class="hint">Число изнутри: дополнительный код и плавающая точка</p><script type="module" src="/widgets/number-bits.js"></script><sotto-number-bits theme="dark"></sotto-number-bits></section>
+  <section class="block"><h2>Подробно</h2><div class="md"><p><b>Операции:</b></p>
+<ul><li><code>a &amp; b</code> — бит 1, если он 1 в обоих (пересечение, маскирование);</li><li><code>a | b</code> — бит 1, если он 1 хотя бы в одном (объединение);</li><li><code>a ^ b</code> — бит 1, если биты различаются. Свойства: <code>a ^ a = 0</code>, <code>a ^ 0 = a</code>, операция обратима;</li><li><code>~a</code> — инверсия всех бит; в дополнительном коде <code>~a = −a − 1</code>;</li><li><code>a &lt;&lt; k</code> — умножение на 2ᵏ, <code>a &gt;&gt; k</code> — деление на 2ᵏ с округлением вниз (для знаковых — арифметический сдвиг), в Java ещё <code>&gt;&gt;&gt;</code> — логический.</li></ul>
+<p><b>Где применяют:</b></p>
+<ul><li><b>флаги и права</b> — набор булевых признаков в одном числе: права файла <code>rwx</code> в Unix (<code>chmod 754</code>), <code>EnumSet</code> в Java хранит множество как биты;</li><li><b>маска вместо остатка</b> — если ёмкость степень двойки, <code>hash % n</code> равно <code>hash &amp; (n − 1)</code>, а это быстрее деления. Поэтому <code>HashMap</code> держит размер степенью двойки, а перед маской перемешивает старшие биты хеша (<code>h ^ (h &gt;&gt;&gt; 16)</code>), иначе младшие биты плохого хеша дали бы коллизии;</li><li><b>приёмы</b> — <code>x &amp; (x − 1)</code> убирает младшую единицу (степень двойки, подсчёт единиц), <code>x &amp; −x</code> оставляет только младшую единицу (дерево Фенвика), <code>x &gt;&gt; 31</code> — знак;</li><li><b>XOR</b> — найти единственный непарный элемент массива за O(n) и O(1) памяти; чётность и RAID-5; простейшее шифрование «одноразовым блокнотом»;</li><li><b>битовые множества и фильтры</b> — <code>BitSet</code>, битовые карты в индексах баз, фильтр Блума;</li><li><b>сети</b> — маска подсети: <code>ip &amp; mask</code> даёт адрес сети.</li></ul>
+<p>Порядок байтов (endianness) — отдельный вопрос: битовые операции работают со значением, а не с его раскладкой в памяти, поэтому от него не зависят.</p></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-python"><code>READ, WRITE, EXEC = 4, 2, 1
+perm = READ | WRITE          # 6
+perm &amp; EXEC != 0             # False — нет права на запуск
+perm &amp;= ~WRITE               # 4 — сняли запись
+
+def is_pow2(x): return x &gt; 0 and x &amp; (x - 1) == 0
+
+def single(nums):            # каждый встречается дважды, кроме одного
+    r = 0
+    for x in nums: r ^= x
+    return r
+
+single([4, 1, 2, 1, 2])      # 4</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Таблица операций и смысл сдвигов как умножения и деления на 2ᵏ.</li><li>Флаги в маске: поставить, снять, проверить.</li><li>Приём <code>x &amp; (x − 1)</code> и проверка степени двойки.</li><li>Пример из реального кода: HashMap, права Unix, маска подсети.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Путать <code>&amp;</code> и <code>&amp;&amp;</code>, <code>|</code> и <code>||</code> — логические операторы с ленивым вычислением.</li><li>Забывать про приоритет: в Java и Python <code>x &amp; 1 == 0</code> разбирается не так, как кажется.</li></ul></div></section>
+  
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="links"><li><a href="/questions/cs/hash-table/">Как устроена хеш-таблица?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/cs/twos-complement/">Как в компьютере хранятся отрицательные целые числа?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Какие битовые операции вы знаете и где они применяются?","acceptedAnswer":{"@type":"Answer","text":"AND &, OR |, XOR ^, NOT ~, сдвиги << и >> работают с каждым битом отдельно и стоят один такт. Флаги: поставить x | f, снять x & ~f, проверить x & f != 0 Степень двойки: x > 0 and x & (x − 1) == 0 Остаток от деления на 2ᵏ: x & (2ᵏ − 1) — так HashMap выбирает корзину XOR: a ^ a = 0 — поиск непарного элемента, контрольные суммы Операции: - a & b — бит 1, если он 1 в обоих (пересечение, маскирование); - a | b — бит 1, если он 1 хотя бы в одном (объединение); - a ^ b — бит 1, если биты различаются. Свойства: a ^ a = 0, a ^ 0 = a, операция обратима; - ~a — инверсия всех бит; в дополнительном коде ~a = −a − 1; - a << k — умножение на 2ᵏ, a >> k — деление на 2ᵏ с округлением вниз (для знаковых — арифметический сдвиг), в Java ещё >>> — логический. Где применяют: - флаги и права — набор булевых признаков в одном числе: права файла rwx в Unix (chmod 754), EnumSet в Java хранит множество как биты; - маска вместо остатка — если ёмкость степень двойки, hash % n равно hash & (n − 1), а это быстрее деления. Поэтому HashMap держит размер степенью двойки, а перед маской перемешивает старшие биты хеша (h ^ (h >>> 16)), иначе младшие биты плохого хеша дали бы коллизии; - приёмы — x & (x − 1) убирает младшую единицу (степень…"}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как подключить circuit breaker к вызову внешнего сервиса в Spring Boot? — вопрос с собеседования</title>
+<meta name="description" content="Resilience4j — библиотека устойчивости для Spring Boot (Hystrix давно в режиме поддержки и из Spring Cloud удалён). Аннотация @CircuitBreaker(name =…">
+<link rel="canonical" href="https://getsotto.ru/questions/spring/resilience4j-circuit-breaker/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/spring/resilience4j-circuit-breaker/">
+<meta property="og:title" content="Как подключить circuit breaker к вызову внешнего сервиса в Spring Boot? — вопрос с собеседования">
+<meta property="og:description" content="Resilience4j — библиотека устойчивости для Spring Boot (Hystrix давно в режиме поддержки и из Spring Cloud удалён). Аннотация @CircuitBreaker(name =…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/spring/">Spring</a> <span>/</span> <span>Как подключить circuit breaker к вызову внешнего сервиса в Spring Boot?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Spring","item":"https://getsotto.ru/questions/spring/"},{"@type":"ListItem","position":3,"name":"Как подключить circuit breaker к вызову внешнего сервиса в Spring Boot?"}]}</script>
+  <h1>Как подключить circuit breaker к вызову внешнего сервиса в Spring Boot?</h1>
+  <div class="chips"><span class="lvl lvl-senior">Senior</span><span class="chip">Устойчивость и наблюдаемость</span><span class="chip">Spring Boot</span><span class="chip">Spring Cloud</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Как использовать Resilience4j в Spring Boot?</li><li>Что такое circuit breaker?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main"><b>Resilience4j</b> — библиотека устойчивости для Spring Boot (Hystrix давно в режиме поддержки и из Spring Cloud удалён). Аннотация <code>@CircuitBreaker(name = &quot;payments&quot;, fallbackMethod = &quot;...&quot;)</code> на методе вызова, пороги — в <code>application.yml</code>.</p><ul><li>Состояния: CLOSED → OPEN (при доле ошибок или медленных вызовов) → HALF_OPEN (пробные вызовы)</li><li>Вместе с ним: таймаут клиента, Retry, Bulkhead</li><li>Состояние и метрики — в Actuator и Micrometer</li></ul><p class="extra"><span>А ещё</span> Аннотации работают через AOP — те же ограничения прокси (self-invocation)</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p><b>Зачем:</b> внешний сервис начал отвечать ошибками или медленно. Без защиты каждый запрос ждёт таймаут, потоки заняты, сервис падает целиком. Circuit breaker после порога ошибок перестаёт вызывать зависимость на время и сразу возвращает запасной ответ.</p>
+<p><b>Подключение:</b> <code>resilience4j-spring-boot3</code> (или <code>spring-cloud-starter-circuitbreaker-resilience4j</code>) и <code>spring-boot-starter-aop</code>.</p>
+<pre class="lang-java"><code>@CircuitBreaker(name = &quot;payments&quot;, fallbackMethod = &quot;pendingPayment&quot;)
+public PaymentStatus charge(Order o) { return client.charge(o); }
+
+PaymentStatus pendingPayment(Order o, Throwable e) {
+    return PaymentStatus.PENDING;          // принять заказ, оплату проверить позже
+}</code></pre>
+<pre class="lang-yaml"><code>resilience4j.circuitbreaker.instances.payments:
+  sliding-window-size: 50
+  minimum-number-of-calls: 20
+  failure-rate-threshold: 50
+  slow-call-duration-threshold: 2s
+  slow-call-rate-threshold: 50
+  wait-duration-in-open-state: 30s
+  permitted-number-of-calls-in-half-open-state: 5</code></pre>
+<p><b>Что важно:</b></p>
+<ul><li>медленные вызовы считаются отдельным порогом — именно они чаще кладут сервис;</li><li>таймаут у HTTP-клиента обязателен — breaker его не заменяет;</li><li>порядок аспектов Retry и CircuitBreaker определяет, считаются ли повторы ошибками;</li><li>fallback должен быть осмысленным: кэш, значение по умолчанию, отложенная обработка — или честная ошибка;</li><li>состояние — в <code>/actuator/circuitbreakers</code>, плюс алерты.</li></ul></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Зачем circuit breaker.</li><li>Resilience4j, аннотация, fallback, настройки.</li><li>Медленные вызовы, таймауты, связка с Retry.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Ставить breaker без таймаута клиента.</li><li>Называть Hystrix текущим выбором.</li></ul></div></section>
+  <section class="block quiz"><h2>Проверьте себя</h2><p class="hint">Один верный вариант. Подумайте, потом откройте ответ.</p><details><summary>Показать варианты и ответ</summary><ul><li class="ok"><span class="mark">✓</span>Подключить Resilience4j, пометить вызов @CircuitBreaker с fallbackMethod и настроить пороги в application.yml</li><li class="no"><span class="mark">✗</span>Увеличить таймаут вызова до минуты</li><li class="no"><span class="mark">✗</span>Использовать Hystrix — он входит в Spring Boot 3</li><li class="no"><span class="mark">✗</span>Повторять вызов бесконечно до успеха</li></ul></details></section>
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="plainlist"><li>Чем circuit breaker отличается от retry?</li><li>Что такое bulkhead?</li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/system-design/circuit-breaker-states/">В каких состояниях бывает circuit breaker и как он между ними переходит?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/system-design/slow-dependency-cascade/">Внешний платёжный провайдер начал отвечать за 30 секунд вместо 200 миллисекунд. Через минуту сервис перестал отвечать вообще, включая страницы, не связанные с оплатой. Что произошло?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/retries-checklist/">Что необходимо учесть, добавляя автоматические повторы вызова внешнего сервиса?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/spring/bulkhead-vs-rate-limiter/">Чем bulkhead отличается от rate limiter?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Как подключить circuit breaker к вызову внешнего сервиса в Spring Boot?","acceptedAnswer":{"@type":"Answer","text":"Resilience4j — библиотека устойчивости для Spring Boot (Hystrix давно в режиме поддержки и из Spring Cloud удалён). Аннотация @CircuitBreaker(name = \"payments\", fallbackMethod = \"...\") на методе вызова, пороги — в application.yml. Состояния: CLOSED → OPEN (при доле ошибок или медленных вызовов) → HALF_OPEN (пробные вызовы) Вместе с ним: таймаут клиента, Retry, Bulkhead Состояние и метрики — в Actuator и Micrometer Аннотации работают через AOP — те же ограничения прокси (self-invocation) Зачем: внешний сервис начал отвечать ошибками или медленно. Без защиты каждый запрос ждёт таймаут, потоки заняты, сервис падает целиком. Circuit breaker после порога ошибок перестаёт вызывать зависимость на время и сразу возвращает запасной ответ. Подключение: resilience4j-spring-boot3 (или spring-cloud-starter-circuitbreaker-resilience4j) и spring-boot-starter-aop. Что важно: - медленные вызовы считаются отдельным порогом — именно они чаще кладут сервис; - таймаут у HTTP-клиента обязателен — breaker его не заменяет; - порядок аспектов Retry и CircuitBreaker определяет, считаются ли повторы ошибками; - fallback должен быть осмысленным: кэш, значение по умолчанию, отложенная обработка — или честная ошибка; - состояние — в /actuator/circuitbreakers, плюс алерты."}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

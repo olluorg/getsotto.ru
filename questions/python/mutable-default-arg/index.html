@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Почему нельзя использовать изменяемый объект как значение аргумента по умолчанию? — вопрос с собеседования</title>
+<meta name="description" content="Значение по умолчанию вычисляется один раз — при определении функции, а не при каждом вызове. Изменяемый объект ([], {}) тогда общий для всех вызовов…">
+<link rel="canonical" href="https://getsotto.ru/questions/python/mutable-default-arg/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/python/mutable-default-arg/">
+<meta property="og:title" content="Почему нельзя использовать изменяемый объект как значение аргумента по умолчанию? — вопрос с собеседования">
+<meta property="og:description" content="Значение по умолчанию вычисляется один раз — при определении функции, а не при каждом вызове. Изменяемый объект ([], {}) тогда общий для всех вызовов…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/python/">Python</a> <span>/</span> <span>Почему нельзя использовать изменяемый объект как значение аргумента по умолчанию?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Python","item":"https://getsotto.ru/questions/python/"},{"@type":"ListItem","position":3,"name":"Почему нельзя использовать изменяемый объект как значение аргумента по умолчанию?"}]}</script>
+  <h1>Почему нельзя использовать изменяемый объект как значение аргумента по умолчанию?</h1>
+  <div class="chips"><span class="lvl lvl-junior">Junior</span><span class="chip">Функции</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Что не так с def f(x=[])?</li><li>Почему список в аргументе по умолчанию накапливает значения?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main">Значение по умолчанию вычисляется <b>один раз</b> — при определении функции, а не при каждом вызове.</p><ul><li>Изменяемый объект (<code>[]</code>, <code>{}</code>) тогда общий для всех вызовов и копит изменения</li><li>Правильно: <code>def f(items=None)</code> и внутри <code>if items is None: items = []</code></li></ul><p class="extra"><span>А ещё</span> Иногда этим пользуются намеренно — как простым кэшем, но это лучше явно оформить</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p>Когда Python выполняет строку <code>def</code>, он создаёт объект функции и в этот же момент вычисляет значения по умолчанию. Они сохраняются в атрибуте <code>__defaults__</code> и переиспользуются при каждом вызове, где аргумент не передан.</p>
+<p>Для неизменяемых значений (<code>0</code>, <code>None</code>, строка) это незаметно. Но если по умолчанию стоит список или словарь и функция его меняет, изменения остаются в том же объекте и видны в следующих вызовах.</p>
+<p>Стандартное решение — сентинел <code>None</code>: в сигнатуре <code>None</code>, а новый список создаётся внутри функции при каждом вызове. Если <code>None</code> — допустимое значение аргумента, используют собственный сентинел: <code>_missing = object()</code>.</p>
+<p>Та же логика касается любых выражений по умолчанию: <code>def log(t=time.time())</code> запомнит время определения функции, а не вызова.</p></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-python"><code>def add(item, items=[]):
+    items.append(item)
+    return items
+
+add(1)   # [1]
+add(2)   # [1, 2] — тот же список!
+
+def add(item, items=None):
+    if items is None:
+        items = []
+    items.append(item)
+    return items</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Причина: значение вычисляется один раз при <code>def</code>.</li><li>Решение через <code>None</code> и создание объекта внутри.</li><li>Понимание, что проблема только при изменении объекта.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Объяснять «Python так кэширует списки» без указания момента вычисления.</li><li>Решение <code>items = items or []</code>: оно подменит и переданный пустой список, что может быть неожиданно для вызывающего.</li></ul></div></section>
+  
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="links"><li><a href="/questions/python/args-passing/">Как передаются аргументы в функцию — по значению или по ссылке?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/python/closures/">Что такое замыкание?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/python/mutable-immutable/">Чем изменяемые типы отличаются от неизменяемых?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Почему нельзя использовать изменяемый объект как значение аргумента по умолчанию?","acceptedAnswer":{"@type":"Answer","text":"Значение по умолчанию вычисляется один раз — при определении функции, а не при каждом вызове. Изменяемый объект ([], {}) тогда общий для всех вызовов и копит изменения Правильно: def f(items=None) и внутри if items is None: items = [] Иногда этим пользуются намеренно — как простым кэшем, но это лучше явно оформить Когда Python выполняет строку def, он создаёт объект функции и в этот же момент вычисляет значения по умолчанию. Они сохраняются в атрибуте __defaults__ и переиспользуются при каждом вызове, где аргумент не передан. Для неизменяемых значений (0, None, строка) это незаметно. Но если по умолчанию стоит список или словарь и функция его меняет, изменения остаются в том же объекте и видны в следующих вызовах. Стандартное решение — сентинел None: в сигнатуре None, а новый список создаётся внутри функции при каждом вызове. Если None — допустимое значение аргумента, используют собственный сентинел: _missing = object(). Та же логика касается любых выражений по умолчанию: def log(t=time.time()) запомнит время определения функции, а не вызова."}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

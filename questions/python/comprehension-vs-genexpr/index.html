@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чем list comprehension отличается от генераторного выражения? — вопрос с собеседования</title>
+<meta name="description" content="[...] сразу строит весь список в памяти, (...) — ленивый генератор. Список: нужен повторный проход, индексы, len Генератор: результат проходится один…">
+<link rel="canonical" href="https://getsotto.ru/questions/python/comprehension-vs-genexpr/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/python/comprehension-vs-genexpr/">
+<meta property="og:title" content="Чем list comprehension отличается от генераторного выражения? — вопрос с собеседования">
+<meta property="og:description" content="[...] сразу строит весь список в памяти, (...) — ленивый генератор. Список: нужен повторный проход, индексы, len Генератор: результат проходится один…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/python/">Python</a> <span>/</span> <span>Чем list comprehension отличается от генераторного выражения?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Python","item":"https://getsotto.ru/questions/python/"},{"@type":"ListItem","position":3,"name":"Чем list comprehension отличается от генераторного выражения?"}]}</script>
+  <h1>Чем list comprehension отличается от генераторного выражения?</h1>
+  <div class="chips"><span class="lvl lvl-junior">Junior</span><span class="chip">Итераторы и генераторы</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>В чём разница между [x for x in a] и (x for x in a)?</li><li>Когда использовать генераторное выражение?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main"><code>[...]</code> сразу строит <b>весь список</b> в памяти, <code>(...)</code> — <b>ленивый генератор</b>.</p><ul><li>Список: нужен повторный проход, индексы, <code>len</code></li><li>Генератор: результат проходится один раз, особенно в <code>sum</code>, <code>any</code>, <code>max</code></li></ul><p class="extra"><span>А ещё</span> <code>sum(x * x for x in data)</code> — скобки генератора можно опустить, если он единственный аргумент</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p>Синтаксис почти одинаковый, разница в результате:</p>
+<ul><li><b>list comprehension</b> <code>[f(x) for x in data if cond]</code> выполняется сразу и возвращает готовый список. Память — O(n). Список можно обходить много раз, брать по индексу, узнавать длину;</li><li><b>генераторное выражение</b> <code>(f(x) for x in data if cond)</code> ничего не считает при создании. Оно отдаёт значения по одному при обходе. Память — O(1), но пройти его можно один раз.</li></ul>
+<p>Когда генератор лучше: данные большие или бесконечные, результат сразу сворачивается (<code>sum</code>, <code>min</code>, <code>any</code>, <code>&quot;&quot;.join</code>), или нужен только первый подходящий элемент — <code>any</code> и <code>next</code> остановятся на нём.</p>
+<p>Когда список лучше: результат нужен несколько раз, нужен <code>len</code> или индекс, или данных мало — тогда список даже немного быстрее.</p>
+<p>Ещё есть dict и set comprehension: <code>{k: v for ...}</code>, <code>{x for ...}</code>. Отдельного «tuple comprehension» нет: <code>(x for x in a)</code> — это генератор, а кортеж получают через <code>tuple(x for x in a)</code>.</p></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-python"><code>data = range(10_000_000)
+
+squares = [x * x for x in data]     # ~ сотни МБ в памяти
+total = sum(x * x for x in data)    # память почти не растёт
+
+has_negative = any(x &lt; 0 for x in data)   # остановится на первом найденном
+
+gen = (x for x in range(3))
+list(gen)    # [0, 1, 2]
+list(gen)    # [] — уже исчерпан</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Жадное вычисление против ленивого.</li><li>Память O(n) против O(1).</li><li>Когда что выбирать, на примерах <code>sum</code>/<code>any</code>.</li><li>Одноразовость генератора.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Думать, что круглые скобки дают кортеж.</li><li>Использовать генератор, а потом пытаться пройти его второй раз.</li></ul></div></section>
+  
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="links"><li><a href="/questions/python/generators/">Что такое генератор и чем он полезен?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/python/iterator-vs-iterable/">Чем итератор отличается от итерируемого объекта?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/python/complexity-list-dict/">Какая сложность у основных операций со списком, словарём и множеством?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Чем list comprehension отличается от генераторного выражения?","acceptedAnswer":{"@type":"Answer","text":"[...] сразу строит весь список в памяти, (...) — ленивый генератор. Список: нужен повторный проход, индексы, len Генератор: результат проходится один раз, особенно в sum, any, max sum(x x for x in data) — скобки генератора можно опустить, если он единственный аргумент Синтаксис почти одинаковый, разница в результате: - list comprehension [f(x) for x in data if cond] выполняется сразу и возвращает готовый список. Память — O(n). Список можно обходить много раз, брать по индексу, узнавать длину; - генераторное выражение (f(x) for x in data if cond) ничего не считает при создании. Оно отдаёт значения по одному при обходе. Память — O(1), но пройти его можно один раз. Когда генератор лучше: данные большие или бесконечные, результат сразу сворачивается (sum, min, any, \"\".join), или нужен только первый подходящий элемент — any и next остановятся на нём. Когда список лучше: результат нужен несколько раз, нужен len или индекс, или данных мало — тогда список даже немного быстрее. Ещё есть dict и set comprehension: {k: v for ...}, {x for ...}. Отдельного «tuple comprehension» нет: (x for x in a) — это генератор, а кортеж получают через tuple(x for x in a)."}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

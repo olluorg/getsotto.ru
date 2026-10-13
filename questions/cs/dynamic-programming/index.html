@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Что такое динамическое программирование? — вопрос с собеседования</title>
+<meta name="description" content="Динамическое программирование — решать задачу через ответы на перекрывающиеся подзадачи, считая каждую один раз и сохраняя в таблицу. Условия…">
+<link rel="canonical" href="https://getsotto.ru/questions/cs/dynamic-programming/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/cs/dynamic-programming/">
+<meta property="og:title" content="Что такое динамическое программирование? — вопрос с собеседования">
+<meta property="og:description" content="Динамическое программирование — решать задачу через ответы на перекрывающиеся подзадачи, считая каждую один раз и сохраняя в таблицу. Условия…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/cs/">Основы</a> <span>/</span> <span>Что такое динамическое программирование?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Основы","item":"https://getsotto.ru/questions/cs/"},{"@type":"ListItem","position":3,"name":"Что такое динамическое программирование?"}]}</script>
+  <h1>Что такое динамическое программирование?</h1>
+  <div class="chips"><span class="lvl lvl-middle">Middle</span><span class="chip">Рекурсия и динамическое программирование</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Чем динамическое программирование отличается от жадного алгоритма?</li><li>Как решить задачу о рюкзаке?</li><li>Что такое подход сверху вниз и снизу вверх?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main">Динамическое программирование — решать задачу через <b>ответы на перекрывающиеся подзадачи</b>, считая каждую <b>один раз</b> и сохраняя в таблицу.</p><ul><li>Условия: оптимальная подструктура и перекрывающиеся подзадачи</li><li>Сверху вниз — рекурсия с мемоизацией; снизу вверх — заполнение таблицы циклом</li></ul><p class="extra"><span>А ещё</span> Рецепт: определить состояние, переход, базу и порядок вычисления</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  <section class="block widget"><h2>Попробуйте сами</h2><p class="hint">Таблица динамического программирования</p><script type="module" src="/widgets/dp-table.js"></script><sotto-dp-table theme="dark"></sotto-dp-table></section>
+  <section class="block"><h2>Подробно</h2><div class="md"><p>Подход применим, когда:</p>
+<ul><li><b>оптимальная подструктура</b> — оптимальный ответ строится из оптимальных ответов на подзадачи;</li><li><b>перекрывающиеся подзадачи</b> — одни и те же подзадачи встречаются многократно (в отличие от «разделяй и властвуй», где части независимы).</li></ul>
+<p><b>Как решать:</b></p>
+<ol><li><b>Состояние</b> — что описывает подзадачу: <code>dp[i]</code> — ответ для первых i элементов, <code>dp[i][j]</code> — для префиксов двух строк.</li><li><b>Переход</b> — как ответ выражается через меньшие подзадачи.</li><li><b>База</b> — ответы для самых маленьких подзадач.</li><li><b>Порядок</b> — так, чтобы нужные значения были посчитаны раньше.</li></ol>
+<p><b>Два способа реализации:</b></p>
+<ul><li><b>сверху вниз</b> — рекурсия с мемоизацией; проще написать, считаются только нужные состояния;</li><li><b>снизу вверх</b> — цикл заполняет таблицу от маленьких подзадач к большим; нет риска переполнения стека, часто можно хранить только последнюю строку таблицы и экономить память.</li></ul>
+<p><b>Классические задачи:</b> числа Фибоначчи, число способов подняться по лестнице, рюкзак 0/1, наибольшая общая подпоследовательность (LCS), расстояние редактирования (Левенштейна), размен монет.</p>
+<p><b>Отличие от жадного алгоритма:</b> жадный делает локально лучший выбор и не пересматривает его — быстро, но верно только для задач со специальной структурой (размен монет 1/5/10 — да, 1/3/4 — нет). Динамическое программирование перебирает все варианты через подзадачи и гарантирует оптимум.</p></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-python"><code>def knapsack(items, capacity):
+    &quot;&quot;&quot;items: [(вес, ценность)] — максимальная ценность в рюкзаке вместимостью capacity.&quot;&quot;&quot;
+    dp = [0] * (capacity + 1)                 # dp[c] — лучшая ценность при вместимости c
+    for weight, value in items:
+        for c in range(capacity, weight - 1, -1):   # с конца, чтобы взять предмет один раз
+            dp[c] = max(dp[c], dp[c - weight] + value)
+    return dp[capacity]
+
+knapsack([(1, 1), (3, 4), (4, 5), (5, 7)], 7)   # 9: предметы весом 3 и 4</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Два условия применимости.</li><li>Рецепт: состояние, переход, база, порядок.</li><li>Сверху вниз против снизу вверх.</li><li>Классическая задача с решением и отличие от жадного подхода.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Не сформулировать состояние явно и запутаться в индексах.</li><li>В рюкзаке 0/1 идти по вместимости слева направо — предмет возьмётся многократно.</li></ul></div></section>
+  
+  
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/cs/recursion-memoization/">Что такое рекурсия и мемоизация?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/cs/time-vs-memory/">Что такое компромисс между временем и памятью?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Что такое динамическое программирование?","acceptedAnswer":{"@type":"Answer","text":"Динамическое программирование — решать задачу через ответы на перекрывающиеся подзадачи, считая каждую один раз и сохраняя в таблицу. Условия: оптимальная подструктура и перекрывающиеся подзадачи Сверху вниз — рекурсия с мемоизацией; снизу вверх — заполнение таблицы циклом Рецепт: определить состояние, переход, базу и порядок вычисления Подход применим, когда: - оптимальная подструктура — оптимальный ответ строится из оптимальных ответов на подзадачи; - перекрывающиеся подзадачи — одни и те же подзадачи встречаются многократно (в отличие от «разделяй и властвуй», где части независимы). Как решать: 1. Состояние — что описывает подзадачу: dp[i] — ответ для первых i элементов, dp[i][j] — для префиксов двух строк. 2. Переход — как ответ выражается через меньшие подзадачи. 3. База — ответы для самых маленьких подзадач. 4. Порядок — так, чтобы нужные значения были посчитаны раньше. Два способа реализации: - сверху вниз — рекурсия с мемоизацией; проще написать, считаются только нужные состояния; - снизу вверх — цикл заполняет таблицу от маленьких подзадач к большим; нет риска переполнения стека, часто можно хранить только последнюю строку таблицы и экономить память. Классические задачи: числа Фибоначчи, число способов…"}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

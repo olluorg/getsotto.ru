@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Чем мьютекс отличается от семафора? — вопрос с собеседования</title>
+<meta name="description" content="Мьютекс — замок на одного: в критической секции один поток, отпустить может только владелец. Семафор — счётчик разрешений: одновременно до N потоков…">
+<link rel="canonical" href="https://getsotto.ru/questions/cs/mutex-semaphore/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/cs/mutex-semaphore/">
+<meta property="og:title" content="Чем мьютекс отличается от семафора? — вопрос с собеседования">
+<meta property="og:description" content="Мьютекс — замок на одного: в критической секции один поток, отпустить может только владелец. Семафор — счётчик разрешений: одновременно до N потоков…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/cs/">Основы</a> <span>/</span> <span>Чем мьютекс отличается от семафора?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Основы","item":"https://getsotto.ru/questions/cs/"},{"@type":"ListItem","position":3,"name":"Чем мьютекс отличается от семафора?"}]}</script>
+  <h1>Чем мьютекс отличается от семафора?</h1>
+  <div class="chips"><span class="lvl lvl-junior">Junior</span><span class="chip">Конкурентность</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Что такое монитор?</li><li>Зачем нужна условная переменная?</li><li>Что такое read-write lock?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main"><b>Мьютекс</b> — замок на одного: в критической секции один поток, отпустить может только владелец. <b>Семафор</b> — счётчик разрешений: одновременно до N потоков.</p><ul><li>Семафор на 1 похож на мьютекс, но у него нет владельца</li><li>Семафор ограничивает параллелизм: не больше 10 запросов к внешнему API</li><li>Монитор = мьютекс + условные переменные (wait/notify, synchronized в Java)</li></ul><p class="extra"><span>А ещё</span> Read-write lock: много читателей или один писатель</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p><b>Мьютекс</b> (mutual exclusion) обеспечивает взаимное исключение: захватил — работаешь, остальные ждут; отпустил — один из ждущих заходит. У мьютекса есть <b>владелец</b>: отпустить его должен тот же поток. Бывают <b>реентерабельные</b> — поток может захватить свой же замок повторно (<code>synchronized</code> и <code>ReentrantLock</code> в Java, <code>RLock</code> в Python), иначе рекурсивный вызов заблокирует сам себя.</p>
+<p><b>Семафор</b> — счётчик. <code>acquire</code> уменьшает его и ждёт, если счётчик ноль; <code>release</code> увеличивает и будит ждущего. Владельца нет: освободить может любой поток. Применения:</p>
+<ul><li><b>ограничение параллелизма</b> — не больше N одновременных запросов к базе или внешнему API, N соединений в пуле;</li><li><b>сигнализация</b> — один поток делает <code>release</code>, другой ждёт на <code>acquire</code> (семафор с нулём);</li><li>двоичный семафор (N = 1) похож на мьютекс, но из-за отсутствия владельца легко ошибиться.</li></ul>
+<p><b>Монитор</b> — объект, в котором мьютекс объединён с <b>условными переменными</b>: поток в критической секции может ждать условия (<code>wait</code>), временно отпуская замок, а другой — разбудить его (<code>notify</code>). В Java каждый объект — монитор: <code>synchronized</code> + <code>wait/notify</code>; современнее — <code>ReentrantLock</code> + <code>Condition</code>. Ждать условия надо <b>в цикле</b> <code>while (!условие) wait()</code> — бывают ложные пробуждения, и пока поток просыпался, условие мог перехватить другой.</p>
+<p><b>Read-write lock</b> — много читателей одновременно или один писатель (<code>ReentrantReadWriteLock</code>). Выгоден, когда чтений намного больше и критическая секция заметная; иначе накладные расходы съедают выигрыш. <code>StampedLock</code> добавляет оптимистичное чтение без блокировки.</p>
+<p><b>Цена.</b> Свободный замок захватывается атомарной инструкцией за десятки наносекунд. Занятый — поток засыпает и просыпается через ядро (переключение контекста), это микросекунды. Поэтому критические секции делают короткими и не делают внутри них ввод-вывод.</p></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-python"><code>import threading, time
+
+api_slots = threading.Semaphore(3)      # не больше 3 одновременных вызовов
+
+def call_api(i):
+    with api_slots:
+        print(&quot;старт&quot;, i)
+        time.sleep(1)                   # одновременно спят максимум трое
+
+for i in range(9):
+    threading.Thread(target=call_api, args=(i,)).start()</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Мьютекс — один поток и владелец, семафор — счётчик без владельца.</li><li>Применение семафора для ограничения параллелизма.</li><li>Монитор и условные переменные, ожидание в цикле.</li><li>Read-write lock и когда он оправдан — плюс.</li></ul></div></section><section class="block mistakes"><h2>Частые ошибки</h2><div class="md"><ul><li>Говорить, что семафор — «мьютекс на несколько потоков» и не упоминать отсутствие владельца.</li><li>Вызывать <code>wait</code> через <code>if</code>, а не в цикле.</li></ul></div></section>
+  
+  <section class="block next"><h2>Что спросят дальше</h2><ul class="links"><li><a href="/questions/cs/deadlock/">Что такое взаимная блокировка и как её избежать?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/cs/producer-consumer/">Как реализовать схему производитель — потребитель?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/cs/race-condition/">Что такое состояние гонки?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/cs/atomic-cas/">Что такое атомарные операции и CAS?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Чем мьютекс отличается от семафора?","acceptedAnswer":{"@type":"Answer","text":"Мьютекс — замок на одного: в критической секции один поток, отпустить может только владелец. Семафор — счётчик разрешений: одновременно до N потоков. Семафор на 1 похож на мьютекс, но у него нет владельца Семафор ограничивает параллелизм: не больше 10 запросов к внешнему API Монитор = мьютекс + условные переменные (wait/notify, synchronized в Java) Read-write lock: много читателей или один писатель Мьютекс (mutual exclusion) обеспечивает взаимное исключение: захватил — работаешь, остальные ждут; отпустил — один из ждущих заходит. У мьютекса есть владелец: отпустить его должен тот же поток. Бывают реентерабельные — поток может захватить свой же замок повторно (synchronized и ReentrantLock в Java, RLock в Python), иначе рекурсивный вызов заблокирует сам себя. Семафор — счётчик. acquire уменьшает его и ждёт, если счётчик ноль; release увеличивает и будит ждущего. Владельца нет: освободить может любой поток. Применения: - ограничение параллелизма — не больше N одновременных запросов к базе или внешнему API, N соединений в пуле; - сигнализация — один поток делает release, другой ждёт на acquire (семафор с нулём); - двоичный семафор (N = 1) похож на мьютекс, но из-за отсутствия владельца легко ошибиться. Монитор — объект, в котором мьютекс объединён с условными переменными: поток в…"}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

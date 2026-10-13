@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Какие инструменты itertools стоит знать? — вопрос с собеседования</title>
+<meta name="description" content="Ленивые строительные блоки: chain (склеить), islice (срез итератора), groupby (группы подряд идущих — нужна предварительная сортировка)…">
+<link rel="canonical" href="https://getsotto.ru/questions/python/itertools/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/python/itertools/">
+<meta property="og:title" content="Какие инструменты itertools стоит знать? — вопрос с собеседования">
+<meta property="og:description" content="Ленивые строительные блоки: chain (склеить), islice (срез итератора), groupby (группы подряд идущих — нужна предварительная сортировка)…">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <a href="/questions/python/">Python</a> <span>/</span> <span>Какие инструменты itertools стоит знать?</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Python","item":"https://getsotto.ru/questions/python/"},{"@type":"ListItem","position":3,"name":"Какие инструменты itertools стоит знать?"}]}</script>
+  <h1>Какие инструменты itertools стоит знать?</h1>
+  <div class="chips"><span class="lvl lvl-middle">Middle</span><span class="chip">Итераторы и генераторы</span></div>
+  <div class="aliases"><span>Ещё спрашивают так:</span><ul><li>Как обработать большой поток данных в Python без загрузки в память?</li></ul></div>
+  <div class="short"><span class="label">Коротко</span><p class="main">Ленивые строительные блоки: <b>chain</b> (склеить), <b>islice</b> (срез итератора), <b>groupby</b> (группы <b>подряд идущих</b> — нужна предварительная сортировка), <b>product/permutations/combinations</b>, <b>accumulate</b> (накопительные суммы), <b>batched</b> (3.12, пачки по n), <b>tee</b>, <b>zip_longest</b>, <b>count/cycle/repeat</b>.</p><ul><li>Всё лениво: работает с бесконечными и огромными потоками</li><li>groupby без сортировки разобьёт одинаковые ключи на несколько групп</li><li>Итератор одноразовый: после прохода пуст</li></ul><p class="extra"><span>А ещё</span> more-itertools — расширенный набор (chunked, windowed, first)</p></div>
+  <p class="sotto-note">Так подсказку видит пользователь <a href="/interviews/">sotto</a> на живом собеседовании — за пару секунд, пока вы думаете вслух.</p>
+  
+  <section class="block"><h2>Подробно</h2><div class="md"><p><b>Зачем.</b> Итераторы обрабатывают элементы по одному, не создавая промежуточных списков: файл на 10 ГБ читается построчно с постоянной памятью.</p>
+<p><b>Частые ловушки:</b></p>
+<ul><li><code>groupby</code> группирует только соседние элементы с одинаковым ключом;</li><li>группа — итератор, который «исчезает» при переходе к следующей — материализовать <code>list(group)</code>, если нужна позже;</li><li><code>tee</code> хранит буфер разницы между копиями — при сильном расхождении съедает память;</li><li>повторный обход исчерпанного итератора молча ничего не даёт.</li></ul>
+<p><b>batched</b> (3.12) — частая задача «отправлять в БД пачками»; в старых версиях — <code>islice</code> в цикле или <code>more_itertools.chunked</code>.</p></div></section><section class="block"><h2>Пример</h2><div class="md"><pre class="lang-python"><code>from itertools import islice, groupby, batched, chain
+
+with open(&quot;big.log&quot;) as f:
+    first_100 = list(islice(f, 100))
+
+rows = sorted(orders, key=lambda o: o.city)
+for city, group in groupby(rows, key=lambda o: o.city):
+    print(city, sum(o.total for o in group))
+
+for chunk in batched(ids, 500):      # Python 3.12
+    db.fetch_many(chunk)</code></pre></div></section><section class="block expect"><h2>Что хотят услышать</h2><div class="md"><ul><li>Основные функции и ленивость.</li><li>Ловушка groupby.</li><li>Применение к большим данным.</li></ul></div></section>
+  
+  
+  <section class="block"><h2>Связанные вопросы</h2><ul class="links"><li><a href="/questions/python/generators/">Что такое генератор и чем он полезен?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/python/comprehension-vs-genexpr/">Чем list comprehension отличается от генераторного выражения?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/python/generator-send-yield-from/">Что делают send, throw и yield from у генераторов?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Какие инструменты itertools стоит знать?","acceptedAnswer":{"@type":"Answer","text":"Ленивые строительные блоки: chain (склеить), islice (срез итератора), groupby (группы подряд идущих — нужна предварительная сортировка), product/permutations/combinations, accumulate (накопительные суммы), batched (3.12, пачки по n), tee, zip_longest, count/cycle/repeat. Всё лениво: работает с бесконечными и огромными потоками groupby без сортировки разобьёт одинаковые ключи на несколько групп Итератор одноразовый: после прохода пуст more-itertools — расширенный набор (chunked, windowed, first) Зачем. Итераторы обрабатывают элементы по одному, не создавая промежуточных списков: файл на 10 ГБ читается построчно с постоянной памятью. Частые ловушки: - groupby группирует только соседние элементы с одинаковым ключом; - группа — итератор, который «исчезает» при переходе к следующей — материализовать list(group), если нужна позже; - tee хранит буфер разницы между копиями — при сильном расхождении съедает память; - повторный обход исчерпанного итератора молча ничего не даёт. batched (3.12) — частая задача «отправлять в БД пачками»; в старых версиях — islice в цикле или more_itertools.chunked."}}]}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Подсказки на собеседовании — в реальном времени</h2>
+        <p class="lead">sotto слышит вопрос интервьюера и показывает короткий ответ и план, как в блоке «Коротко». Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

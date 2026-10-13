@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вопросы на собеседовании: Go</title>
+<meta name="description" content="Go для джуна: срезы и мапы, интерфейсы, ошибки, горутины, каналы, context, память и тесты.">
+<link rel="canonical" href="https://getsotto.ru/questions/go/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/questions/go/">
+<meta property="og:title" content="Вопросы на собеседовании: Go">
+<meta property="og:description" content="Go для джуна: срезы и мапы, интерфейсы, ошибки, горутины, каналы, context, память и тесты.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/questions/">Вопросы</a> <span>/</span> <span>Go</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Вопросы","item":"https://getsotto.ru/questions/"},{"@type":"ListItem","position":2,"name":"Go"}]}</script>
+  <h1>Вопросы на собеседовании: Go</h1>
+  <p class="lead">Go для джуна: срезы и мапы, интерфейсы, ошибки, горутины, каналы, context, память и тесты. 31 вопрос с короткими ответами, разбором и частыми ошибками.</p>
+  <div class="prep-links"><span>Подборки:</span> <a class="chip" href="/prep/go-junior/">Вопросы на собеседовании Go junior</a></div>
+  <section class="topic"><h2>Основы языка <small>5</small></h2><ul class="links"><li><a href="/questions/go/defer/">Как работает defer и в каком порядке выполняются отложенные вызовы?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/pointers-pass-by-value/">Как в Go передаются аргументы и зачем нужны указатели?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/short-declaration-shadowing/">Чем := отличается от var и что такое затенение переменных?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/why-go/">Чем Go отличается от других языков и почему его выбирают для бэкенда?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/zero-values/">Что такое нулевые значения в Go?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section><section class="topic"><h2>Срезы, мапы и строки <small>7</small></h2><ul class="links"><li><a href="/questions/go/append-shared-array/">Почему изменение одного среза неожиданно меняет другой?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/array-vs-slice/">Чем массив отличается от среза в Go?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/make-vs-new/">Чем make отличается от new в Go?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/map-internals/">Как устроена map в Go и какие у неё особенности?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/nil-map-slice/">Чем nil-срез отличается от пустого и почему запись в nil-map вызывает panic?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/slice-internals/">Как устроен срез (slice) в Go?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/strings-runes/">Как в Go устроены строки, байты и руны?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section><section class="topic"><h2>Методы и интерфейсы <small>6</small></h2><ul class="links"><li><a href="/questions/go/any-type-assertion/">Что такое any, type assertion и type switch?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/interfaces-implicit/">Как работают интерфейсы в Go и что значит неявная реализация?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/struct-embedding/">Как в Go обходятся без наследования — что такое встраивание (embedding)?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/value-vs-pointer-receiver/">Когда метод должен иметь получатель-указатель, а когда — значение?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/generics/">Как устроены дженерики в Go и когда их использовать?</a> <span class="lvl lvl-middle">Middle</span></li><li><a href="/questions/go/nil-interface/">Почему интерфейс с nil-указателем внутри не равен nil?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section><section class="topic"><h2>Ошибки и panic <small>2</small></h2><ul class="links"><li><a href="/questions/go/errors-as-values/">Как в Go обрабатывают ошибки и зачем нужны errors.Is, errors.As и %w?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/panic-recover/">Когда в Go используют panic и как работает recover?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section><section class="topic"><h2>Горутины и каналы <small>8</small></h2><ul class="links"><li><a href="/questions/go/channels/">Чем буферизованный канал отличается от небуферизованного и что происходит при закрытии канала?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/context/">Зачем нужен context.Context?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/goroutines/">Что такое горутина и чем она отличается от потока ОС?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/loop-variable/">Что изменилось с переменной цикла в Go 1.22?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/mutex-waitgroup/">Когда использовать каналы, а когда sync.Mutex и WaitGroup?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/race-detector/">Что такое гонка данных в Go и как её найти?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/select/">Как работает select в Go?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/goroutine-leak/">Что такое утечка горутин и как её избежать?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section><section class="topic"><h2>Память и GC <small>1</small></h2><ul class="links"><li><a href="/questions/go/gc-escape-analysis/">Как в Go устроены сборка мусора и размещение на стеке или в куче?</a> <span class="lvl lvl-middle">Middle</span></li></ul></section><section class="topic"><h2>Модули, тесты и инструменты <small>2</small></h2><ul class="links"><li><a href="/questions/go/modules/">Как устроены модули Go — go.mod, go.sum, версии?</a> <span class="lvl lvl-junior">Junior</span></li><li><a href="/questions/go/testing/">Как пишут тесты в Go — табличные тесты, моки, бенчмарки?</a> <span class="lvl lvl-junior">Junior</span></li></ul></section>
+</div></section>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Тренируйтесь и отвечайте увереннее</h2>
+        <p class="lead">На живом собеседовании sotto подсказывает короткий ответ на вопрос интервьюера. Оставьте контакт — пришлём доступ.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>
