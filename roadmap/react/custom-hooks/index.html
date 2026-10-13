@@ -47,7 +47,7 @@
 <section class="bank card-page article"><div class="wrap narrow">
   <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#hooks">React</a> <span>/</span> <a href="/roadmap/react/hooks/">Хуки</a> <span>/</span> <span>Пользовательские хуки</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#hooks"},{"@type":"ListItem","position":4,"name":"Хуки","item":"https://getsotto.ru/roadmap/react/hooks/"},{"@type":"ListItem","position":5,"name":"Пользовательские хуки"}]}</script>
   <h1>Пользовательские хуки</h1>
-  <div class="chips"><span class="rm-kind k-core">Основа</span></div>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-middle">с Middle</span></div>
   <p class="lead">Как выносить повторяющуюся логику с состоянием и эффектами в свои хуки.</p>
   <article class="md"><p>Пользовательский хук — функция с именем на <code>use</code>, которая вызывает другие хуки. Она делит <b>логику</b>, а не состояние: у каждого компонента, который её вызвал, своё состояние.</p>
 <pre class="lang-jsx"><code>function useDebounced(value, delay = 300) {
@@ -62,7 +62,7 @@
 const q = useDebounced(search);</code></pre>
 <h3>Что важно знать</h3>
 <ul><li>Подчиняются тем же правилам хуков: вызывать на верхнем уровне.</li><li>Хорошие кандидаты: подписки (<code>useOnlineStatus</code>, <code>useMediaQuery</code>), таймеры, работа с <code>localStorage</code>, логика форм.</li><li>Возвращать стабильные значения (<code>useCallback</code> для функций), если их будут использовать в зависимостях.</li><li>Тестирование хуков — <code>renderHook</code> из Testing Library.</li></ul></article>
-  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/reusing-logic-with-custom-hooks" rel="noopener" target="_blank">react.dev: Свои хуки ↗</a></li></ul></section>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Middle <small>≈ 4 ч</small></h3><ul><li>Выносит повторяющуюся логику в пользовательские хуки со стабильным возвращаемым значением</li><li>Тестирует хуки через renderHook</li></ul><p class="rm-practice"><b>Практика.</b> Написать хуки useDebounce, useMediaQuery и useLocalStorage с тестами.</p></div></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/reusing-logic-with-custom-hooks" rel="noopener" target="_blank">react.dev: Свои хуки ↗</a></li></ul></section>
   <nav class="rm-pager"><a href="/roadmap/react/refs/">← Refs и работа с DOM</a><a class="next" href="/roadmap/react/rendering/">Рендеринг и производительность React →</a></nav>
   <p class="rm-back"><a href="/roadmap/react/#hooks">← Вся карта «React»</a></p>
 </div></section>

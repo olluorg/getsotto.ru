@@ -47,7 +47,7 @@
 <section class="bank card-page article"><div class="wrap narrow">
   <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#state-management">React</a> <span>/</span> <a href="/roadmap/react/state-management/">Управление состоянием</a> <span>/</span> <span>Серверное состояние — TanStack Query</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#state-management"},{"@type":"ListItem","position":4,"name":"Управление состоянием","item":"https://getsotto.ru/roadmap/react/state-management/"},{"@type":"ListItem","position":5,"name":"Серверное состояние — TanStack Query"}]}</script>
   <h1>Серверное состояние — TanStack Query</h1>
-  <div class="chips"><span class="rm-kind k-core">Основа</span></div>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-middle">с Middle</span></div>
   <p class="lead">Загрузка, кэширование и обновление данных с сервера без самописных эффектов.</p>
   <article class="md"><pre class="lang-jsx"><code>const { data, isPending, error } = useQuery({
   queryKey: [&quot;orders&quot;, page],
@@ -60,7 +60,7 @@ const mutation = useMutation({
 });</code></pre>
 <h3>Что важно знать</h3>
 <ul><li>Данные с сервера — это <b>кэш</b>, а не состояние приложения: у него есть свежесть, повторы, обновление в фоне, инвалидация.</li><li>Запрос в <code>useEffect</code> с ручными флагами загрузки — источник гонок, дублирования и утечек; библиотека решает это из коробки.</li><li>Ключ запроса включает все параметры — смена страницы или фильтра автоматически загружает нужные данные.</li><li>Оптимистичные обновления: показать результат сразу, откатить при ошибке.</li><li>Альтернативы: RTK Query (в составе Redux Toolkit), SWR, загрузчики маршрутизатора.</li></ul></article>
-  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://tanstack.com/query/latest/docs/framework/react/overview" rel="noopener" target="_blank">TanStack Query ↗</a></li></ul></section>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Middle <small>≈ 6 ч</small></h3><ul><li>Загружает и изменяет данные через useQuery и useMutation с инвалидацией</li><li>Делает оптимистичные обновления с откатом при ошибке</li></ul><p class="rm-practice"><b>Практика.</b> Перевести список заказов на TanStack Query с пагинацией, отменой заказа и оптимистичным обновлением.</p></div></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://tanstack.com/query/latest/docs/framework/react/overview" rel="noopener" target="_blank">TanStack Query ↗</a></li></ul></section>
   <nav class="rm-pager"><a href="/roadmap/react/context/">← Context</a><a class="next" href="/roadmap/react/redux-toolkit/">Redux Toolkit →</a></nav>
   <p class="rm-back"><a href="/roadmap/react/#state-management">← Вся карта «React»</a></p>
 </div></section>

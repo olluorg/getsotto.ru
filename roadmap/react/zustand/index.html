@@ -47,7 +47,7 @@
 <section class="bank card-page article"><div class="wrap narrow">
   <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#state-management">React</a> <span>/</span> <a href="/roadmap/react/state-management/">Управление состоянием</a> <span>/</span> <span>Zustand</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#state-management"},{"@type":"ListItem","position":4,"name":"Управление состоянием","item":"https://getsotto.ru/roadmap/react/state-management/"},{"@type":"ListItem","position":5,"name":"Zustand"}]}</script>
   <h1>Zustand</h1>
-  <div class="chips"><span class="rm-kind k-alternative">Альтернатива</span></div>
+  <div class="chips"><span class="rm-kind k-alternative">Альтернатива</span> <span class="lvl lvl-junior">с Junior</span></div>
   <p class="lead">Минималистичное глобальное хранилище на хуках.</p>
   <article class="md"><pre class="lang-js"><code>const useCart = create((set) =&gt; ({
   items: [],
@@ -57,7 +57,7 @@
 const count = useCart((s) =&gt; s.items.length);   // подписка на часть состояния</code></pre>
 <h3>Что важно знать</h3>
 <ul><li>Хранилище — хук; не нужен провайдер, мало кода.</li><li>Селектор в хуке ограничивает перерисовки нужной частью состояния.</li><li>Хорош для небольших и средних приложений; для серверных данных всё равно лучше TanStack Query.</li><li>Другие легковесные варианты — Jotai (атомы), MobX (наблюдаемые объекты).</li></ul></article>
-  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://zustand.docs.pmnd.rs/learn/getting-started/introduction" rel="noopener" target="_blank">Zustand ↗</a></li></ul></section>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Junior <small>≈ 3 ч</small></h3><ul><li>Создаёт хранилище Zustand и подписывается на его часть селектором</li></ul><p class="rm-practice"><b>Практика.</b> Сделать корзину на Zustand с сохранением в localStorage.</p></div></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://zustand.docs.pmnd.rs/learn/getting-started/introduction" rel="noopener" target="_blank">Zustand ↗</a></li></ul></section>
   <nav class="rm-pager"><a href="/roadmap/react/redux-toolkit/">← Redux Toolkit</a><a class="next" href="/roadmap/react/forms/">Формы в React →</a></nav>
   <p class="rm-back"><a href="/roadmap/react/#state-management">← Вся карта «React»</a></p>
 </div></section>

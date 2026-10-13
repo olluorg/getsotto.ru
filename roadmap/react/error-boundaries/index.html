@@ -47,7 +47,7 @@
 <section class="bank card-page article"><div class="wrap narrow">
   <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#rendering">React</a> <span>/</span> <a href="/roadmap/react/rendering/">Рендеринг и производительность React</a> <span>/</span> <span>Границы ошибок</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#rendering"},{"@type":"ListItem","position":4,"name":"Рендеринг и производительность React","item":"https://getsotto.ru/roadmap/react/rendering/"},{"@type":"ListItem","position":5,"name":"Границы ошибок"}]}</script>
   <h1>Границы ошибок</h1>
-  <div class="chips"><span class="rm-kind k-core">Основа</span></div>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-middle">с Middle</span></div>
   <p class="lead">Как не дать ошибке в одном компоненте уронить всё приложение.</p>
   <article class="md"><p>Ошибка при рендере любого компонента без обработки размонтирует <b>всё приложение</b> — пользователь видит белый экран. Граница ошибок перехватывает ошибку в своём поддереве и показывает запасной интерфейс.</p>
 <pre class="lang-jsx"><code>import { ErrorBoundary } from &quot;react-error-boundary&quot;;
@@ -57,7 +57,7 @@
 &lt;/ErrorBoundary&gt;</code></pre>
 <h3>Что важно знать</h3>
 <ul><li>Встроенные границы — только классовые компоненты (<code>componentDidCatch</code>, <code>getDerivedStateFromError</code>); на практике берут библиотеку <code>react-error-boundary</code>.</li><li>Не ловят ошибки в обработчиках событий и асинхронном коде — там обычный <code>try/catch</code>.</li><li>Ставят на уровне страниц и крупных виджетов, плюс отправка ошибки в мониторинг (Sentry).</li></ul></article>
-  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary" rel="noopener" target="_blank">react.dev: Error boundary ↗</a></li></ul></section>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Middle <small>≈ 3 ч</small></h3><ul><li>Ставит границы ошибок на уровне страниц и виджетов с запасным интерфейсом и отправкой в мониторинг</li><li>Объясняет, какие ошибки границы не ловят</li></ul><p class="rm-practice"><b>Практика.</b> Добавить границы ошибок в приложение и проверить, что ошибка в одном виджете не роняет страницу.</p></div></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary" rel="noopener" target="_blank">react.dev: Error boundary ↗</a></li></ul></section>
   <nav class="rm-pager"><a href="/roadmap/react/suspense-lazy/">← Suspense и ленивая загрузка</a><a class="next" href="/roadmap/react/portals/">Порталы →</a></nav>
   <p class="rm-back"><a href="/roadmap/react/#rendering">← Вся карта «React»</a></p>
 </div></section>

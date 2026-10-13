@@ -47,7 +47,7 @@
 <section class="bank card-page article"><div class="wrap narrow">
   <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#rendering">React</a> <span>/</span> <a href="/roadmap/react/rendering/">Рендеринг и производительность React</a> <span>/</span> <span>Suspense и ленивая загрузка</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#rendering"},{"@type":"ListItem","position":4,"name":"Рендеринг и производительность React","item":"https://getsotto.ru/roadmap/react/rendering/"},{"@type":"ListItem","position":5,"name":"Suspense и ленивая загрузка"}]}</script>
   <h1>Suspense и ленивая загрузка</h1>
-  <div class="chips"><span class="rm-kind k-core">Основа</span></div>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-middle">с Middle</span></div>
   <p class="lead">Разделение кода по компонентам и показ заглушки, пока что-то загружается.</p>
   <article class="md"><pre class="lang-jsx"><code>const Reports = lazy(() =&gt; import(&quot;./Reports&quot;));
 
@@ -57,7 +57,7 @@
 <p><code>lazy</code> загружает код компонента по требованию отдельным файлом, а <code>Suspense</code> показывает заглушку, пока код или данные не готовы.</p>
 <h3>Что важно знать</h3>
 <ul><li>Ленивая загрузка по маршрутам и для тяжёлых редко используемых частей (редакторы, графики) уменьшает первый бандл.</li><li>Suspense работает и с данными — в библиотеках, которые его поддерживают (TanStack Query, React Router, Next.js), и с хуком <code>use</code> для промисов.</li><li>Вложенные границы Suspense дают постепенное появление страницы вместо одного большого спиннера.</li><li>При SSR Suspense позволяет отправлять HTML потоком: быстрые части приходят сразу, медленные — по готовности.</li></ul></article>
-  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/reference/react/Suspense" rel="noopener" target="_blank">react.dev: Suspense ↗</a></li></ul></section>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Middle <small>≈ 4 ч</small></h3><ul><li>Разделяет код по маршрутам через lazy и Suspense</li><li>Строит постепенное появление страницы вложенными границами Suspense</li></ul><p class="rm-practice"><b>Практика.</b> Перевести маршруты приложения на lazy с заглушками и измерить уменьшение начального бандла.</p></div></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/reference/react/Suspense" rel="noopener" target="_blank">react.dev: Suspense ↗</a></li></ul></section>
   <nav class="rm-pager"><a href="/roadmap/react/rendering/">← Рендеринг и производительность React</a><a class="next" href="/roadmap/react/error-boundaries/">Границы ошибок →</a></nav>
   <p class="rm-back"><a href="/roadmap/react/#rendering">← Вся карта «React»</a></p>
 </div></section>

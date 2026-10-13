@@ -47,7 +47,7 @@
 <section class="bank card-page article"><div class="wrap narrow">
   <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/react/#state-management">React</a> <span>/</span> <a href="/roadmap/react/state-management/">Управление состоянием</a> <span>/</span> <span>Context</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/"},{"@type":"ListItem","position":3,"name":"React","item":"https://getsotto.ru/roadmap/react/#state-management"},{"@type":"ListItem","position":4,"name":"Управление состоянием","item":"https://getsotto.ru/roadmap/react/state-management/"},{"@type":"ListItem","position":5,"name":"Context"}]}</script>
   <h1>Context</h1>
-  <div class="chips"><span class="rm-kind k-core">Основа</span></div>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-junior">с Junior</span></div>
   <p class="lead">Передача данных вглубь дерева без проброса props — и почему это не менеджер состояния.</p>
   <article class="md"><pre class="lang-jsx"><code>const ThemeContext = createContext(&quot;light&quot;);
 
@@ -62,7 +62,7 @@ function Button() {
 }</code></pre>
 <h3>Что важно знать</h3>
 <ul><li>Подходит для редко меняющихся данных, нужных многим: тема, язык, текущий пользователь.</li><li>При изменении значения перерисовываются <b>все</b> компоненты, читающие контекст. Объект-значение, созданный заново на каждом рендере, перерисует их всегда — оборачивать в <code>useMemo</code> или разделять контексты.</li><li>Часто проблему проброса props лучше решает композиция через <code>children</code>.</li><li>Для часто меняющегося общего состояния — Zustand, Redux Toolkit или библиотеки серверного состояния.</li></ul></article>
-  <section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/passing-data-deeply-with-context" rel="noopener" target="_blank">react.dev: Context ↗</a></li></ul></section>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Junior <small>≈ 3 ч</small></h3><ul><li>Передаёт тему или пользователя через Context</li></ul><p class="rm-practice"><b>Практика.</b> Сделать переключатель темы на Context.</p></div><div class="rm-grade"><h3>Middle <small>≈ 3 ч</small></h3><ul><li>Избегает лишних перерисовок — мемоизация значения, разделение контекстов</li><li>Объясняет, почему Context — не менеджер состояния</li></ul><p class="rm-practice"><b>Практика.</b> Найти и устранить лишние перерисовки из-за контекста с помощью React DevTools Profiler.</p></div></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://react.dev/learn/passing-data-deeply-with-context" rel="noopener" target="_blank">react.dev: Context ↗</a></li></ul></section>
   <nav class="rm-pager"><a href="/roadmap/react/state-management/">← Управление состоянием</a><a class="next" href="/roadmap/react/server-state/">Серверное состояние — TanStack Query →</a></nav>
   <p class="rm-back"><a href="/roadmap/react/#state-management">← Вся карта «React»</a></p>
 </div></section>
