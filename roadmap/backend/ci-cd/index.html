@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CI/CD и выкатка без простоя — карта «Backend-разработчик»</title>
+<meta name="description" content="Пайплайн, неизменяемый артефакт, стратегии выкатки и миграции схемы.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/backend/ci-cd/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/roadmap/backend/ci-cd/">
+<meta property="og:title" content="CI/CD и выкатка без простоя — карта «Backend-разработчик»">
+<meta property="og:description" content="Пайплайн, неизменяемый артефакт, стратегии выкатки и миграции схемы.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/roadmap/" class=on>Карты</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/backend/#deploy">Backend-разработчик</a> <span>/</span> <a href="/roadmap/backend/deploy/">Контейнеры и выкатка</a> <span>/</span> <span>CI/CD и выкатка без простоя</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Backend-разработчик","item":"https://getsotto.ru/roadmap/backend/#deploy"},{"@type":"ListItem","position":3,"name":"Контейнеры и выкатка","item":"https://getsotto.ru/roadmap/backend/deploy/"},{"@type":"ListItem","position":4,"name":"CI/CD и выкатка без простоя"}]}</script>
+  <h1>CI/CD и выкатка без простоя</h1>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-junior">с Junior</span></div>
+  <p class="lead">Пайплайн, неизменяемый артефакт, стратегии выкатки и миграции схемы.</p>
+  <article class="md"><h3>Что важно знать</h3>
+<ul><li><b>Пайплайн</b>: сборка → тесты → образ с тегом коммита → стейдж → прод.</li><li><b>Один артефакт</b> для всех окружений, различается только конфигурация.</li><li><b>Совместимость версий</b>: при rolling update старая и новая версии работают одновременно.</li><li><b>Миграции</b>: расширить схему → выкатить код → убрать старое.</li><li><b>Canary и blue-green</b> — снижают риск, требуют метрик и быстрого отката.</li></ul></article>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Junior <small>≈ 4 ч</small></h3><ul><li>Настраивает CI со сборкой, тестами и линтером для своего сервиса</li></ul><p class="rm-practice"><b>Практика.</b> Настроить GitHub Actions или GitLab CI для сервиса со сборкой образа.</p></div><div class="rm-grade"><h3>Middle <small>≈ 8 ч</small></h3><ul><li>Собирает образ один раз и продвигает его по окружениям</li><li>Выкатывает изменения без простоя, совместимые со старой версией</li><li>Проводит миграцию схемы по схеме expand–contract</li></ul><p class="rm-practice"><b>Практика.</b> Выкатить переименование колонки в работающем сервисе тремя релизами без простоя.</p></div><div class="rm-grade"><h3>Senior <small>≈ 4 ч</small></h3><ul><li>Выбирает стратегию выкатки (rolling, blue-green, canary) с автоматическим откатом по метрикам</li></ul><p class="rm-practice"><b>Практика.</b> Внедрить canary-выкатку с автоматическим откатом по доле ошибок.</p></div></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/devops/ci-cd-pipeline/">Из каких этапов состоит CI/CD-пайплайн и чем continuous delivery отличается от continuous deployment?</a> <span class="lvl lvl-junior">Junior</span><p>CI — каждое изменение автоматически собирается и проверяется: сборка, линтеры, юнит-тесты, сканирование, сборка артефакта (образа). CD: continuous delivery — артефакт всегда готов…</p></li><li><a href="/questions/devops/deployment-strategies/">Какие стратегии выкатки вы знаете и как выбрать подходящую?</a> <span class="lvl lvl-middle">Middle</span><p>Recreate — остановить старое, запустить новое: простой, зато просто. Rolling — постепенная замена экземпляров, без простоя, откат медленный. Blue-green — полная копия окружения…</p></li><li><a href="/questions/devops/branching-strategies/">Чем trunk-based development отличается от GitFlow?</a> <span class="lvl lvl-middle">Middle</span><p>GitFlow — долгоживущие ветки develop и main, ветки фич, релизов и хотфиксов; подходит для продуктов с редкими версионированными релизами (коробка, мобильные приложения), но…</p></li><li><a href="/questions/system-design/rolling-update/">Что такое rolling update при выкатке новой версии?</a> <span class="lvl lvl-junior">Junior</span><p>Экземпляры заменяются постепенно: поднимается новый, проходит readiness, старый снимается. Сервис отвечает всё время.</p></li><li><a href="/questions/system-design/rolling-update-compatibility/">Во время rolling update в проде одновременно работают старая и новая версии сервиса. Какое требование из этого следует?</a> <span class="lvl lvl-middle">Middle</span><p>Во время выкатки работают обе версии, поэтому совместимость нужна в обе стороны: старая переживает данные и запросы новой, новая — старой.</p></li><li><a href="/questions/system-design/rename-column-zero-downtime/">Нужно переименовать колонку name в full_name без простоя при rolling-выкатке. Какая последовательность верна?</a> <span class="lvl lvl-middle">Middle</span><p>Expand–contract в пять шагов: добавить full_name → писать в обе колонки → перелить старые данные порциями → читать из новой → удалить name отдельным поздним релизом.</p></li></ul></section><section class="block"><h2>Разборы темы</h2><ul class="links"><li><a href="/learn/system-design/delivery/">Выкатка без простоя и миграции схемы</a><p>Rolling, blue-green и canary с их ценой, отделение деплоя от релиза через feature flags, expand–contract для схемы БД, совместимость соседних версий и стратегия отката.</p></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/common/docker/">← Docker</a><a class="next" href="/roadmap/backend/kubernetes/">Kubernetes для разработчика →</a></nav>
+  <p class="rm-back"><a href="/roadmap/backend/#deploy">← Вся карта «Backend-разработчик»</a></p>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"CI/CD и выкатка без простоя","description":"Пайплайн, неизменяемый артефакт, стратегии выкатки и миграции схемы.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/backend/ci-cd/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

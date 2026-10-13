@@ -6,6 +6,7 @@
   const N = { junior: "Junior", middle: "Middle", senior: "Senior" };
   const $ = (s) => document.querySelector(s);
   const from = $("#pf-from"), to = $("#pf-to"), opt = $("#pf-opt"), week = $("#pf-week");
+  const branch = $("#pf-branch");   // выбор ветки (язык в карте Backend), если карта его предлагает
   if (!from) return;
 
   function apply() {
@@ -13,6 +14,7 @@
     const lo = +from.value, hi = +to.value;
     let total = 0, topics = 0;
     document.querySelectorAll(".ps").forEach((st) => {
+      if (branch && st.dataset.branch && st.dataset.branch !== branch.value) { st.hidden = true; return; }
       let sh = 0, any = false;
       st.querySelectorAll(".pn").forEach((n) => {
         const okKind = opt.checked || n.dataset.kind === "core";
@@ -91,6 +93,6 @@
     URL.revokeObjectURL(a.href);
   });
 
-  [from, to, opt, week].forEach((el) => el.addEventListener("input", apply));
+  [from, to, opt, week, branch].forEach((el) => el && el.addEventListener("input", apply));
   apply();
 })();

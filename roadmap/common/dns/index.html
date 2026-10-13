@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DNS — карта «Frontend-разработчик»</title>
+<title>DNS — карта «Backend-разработчик»</title>
 <meta name="description" content="Система, которая превращает имя сайта в IP-адрес, — записи, кэширование, TTL и типичные проблемы.">
 <link rel="canonical" href="https://getsotto.ru/roadmap/common/dns/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="sotto">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:url" content="https://getsotto.ru/roadmap/common/dns/">
-<meta property="og:title" content="DNS — карта «Frontend-разработчик»">
+<meta property="og:title" content="DNS — карта «Backend-разработчик»">
 <meta property="og:description" content="Система, которая превращает имя сайта в IP-адрес, — записи, кэширование, TTL и типичные проблемы.">
 <meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
 
@@ -45,7 +45,7 @@
 <main>
 <link rel="stylesheet" href="/assets/bank.css">
 <section class="bank card-page article"><div class="wrap narrow">
-  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/frontend/#internet">Frontend-разработчик</a> <span>/</span> <a href="/roadmap/frontend/internet/">Интернет и браузер</a> <span>/</span> <span>DNS</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Frontend-разработчик","item":"https://getsotto.ru/roadmap/frontend/#internet"},{"@type":"ListItem","position":3,"name":"Интернет и браузер","item":"https://getsotto.ru/roadmap/frontend/internet/"},{"@type":"ListItem","position":4,"name":"DNS"}]}</script>
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/backend/#cs">Backend-разработчик</a> <span>/</span> <a href="/roadmap/backend/cs/">Как работает компьютер и сеть</a> <span>/</span> <span>DNS</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Backend-разработчик","item":"https://getsotto.ru/roadmap/backend/#cs"},{"@type":"ListItem","position":3,"name":"Как работает компьютер и сеть","item":"https://getsotto.ru/roadmap/backend/cs/"},{"@type":"ListItem","position":4,"name":"DNS"}]}</script>
   <h1>DNS</h1>
   <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-junior">с Junior</span></div>
   <p class="lead">Система, которая превращает имя сайта в IP-адрес, — записи, кэширование, TTL и типичные проблемы.</p>
@@ -54,9 +54,9 @@
 <div class="table"><table><thead><tr><th>запись</th><th>что хранит</th></tr></thead><tbody><tr><td>A / AAAA</td><td>IPv4 / IPv6 адрес</td></tr><tr><td>CNAME</td><td>псевдоним на другое имя</td></tr><tr><td>MX</td><td>почтовые серверы</td></tr><tr><td>TXT</td><td>проверки владения, SPF, DKIM</td></tr><tr><td>NS</td><td>какие серверы отвечают за зону</td></tr></tbody></table></div>
 <h3>Что важно знать</h3>
 <ul><li>Смена записи распространяется не мгновенно — старый ответ живёт до истечения TTL; перед переездом TTL заранее уменьшают.</li><li>CNAME нельзя поставить на корень домена (<code>example.com</code>) — для этого у провайдеров есть ALIAS или ANAME.</li><li>Проверка: <code>dig example.com</code>, <code>nslookup</code>.</li><li>DNS-запрос — часть задержки первой загрузки; <code>&lt;link rel=&quot;dns-prefetch&quot;&gt;</code> и <code>preconnect</code> помогают браузеру начать раньше.</li></ul></article>
-  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Junior <small>≈ 2 ч</small></h3><ul><li>Объясняет, как браузер находит IP по домену и что такое TTL</li><li>Проверяет записи домена через dig или nslookup</li></ul><p class="rm-practice"><b>Практика.</b> Посмотреть A, CNAME, MX и TXT записи трёх известных сайтов и объяснить, что означает каждая.</p></div><div class="rm-grade"><h3>Middle <small>≈ 2 ч</small></h3><ul><li>Планирует смену DNS-записей с учётом TTL без простоя</li><li>Использует dns-prefetch и preconnect для сторонних доменов</li></ul><p class="rm-practice"><b>Практика.</b> Описать план переезда сайта на новый сервер через смену DNS без простоя с учётом TTL.</p></div></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/cs/dns/">Как работает DNS?</a> <span class="lvl lvl-junior">Junior</span><p>DNS — распределённая иерархическая база «имя → адрес». Рекурсивный резолвер спрашивает по цепочке: корневые серверы → серверы зоны .ru → авторитетный сервер домена.</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_domain_name" rel="noopener" target="_blank">MDN: Что такое DNS ↗</a></li></ul></section>
-  <nav class="rm-pager"><a href="/roadmap/common/http/">← HTTP и HTTPS</a><a class="next" href="/roadmap/common/domains-hosting/">Домены, хостинг и CDN →</a></nav>
-  <p class="rm-back"><a href="/roadmap/frontend/#internet">← Вся карта «Frontend-разработчик»</a></p>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Junior <small>≈ 2 ч</small></h3><ul><li>Объясняет, как браузер находит IP по домену и что такое TTL</li><li>Проверяет записи домена через dig или nslookup</li></ul><p class="rm-practice"><b>Практика.</b> Посмотреть A, CNAME, MX и TXT записи трёх известных сайтов и объяснить, что означает каждая.</p></div><div class="rm-grade"><h3>Middle <small>≈ 2 ч</small></h3><ul><li>Планирует смену DNS-записей с учётом TTL без простоя</li><li>Использует dns-prefetch и preconnect для сторонних доменов</li></ul><p class="rm-practice"><b>Практика.</b> Описать план переезда сайта на новый сервер через смену DNS без простоя с учётом TTL.</p></div></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/cs/dns/">Как работает DNS?</a> <span class="lvl lvl-junior">Junior</span><p>DNS — распределённая иерархическая база «имя → адрес». Рекурсивный резолвер спрашивает по цепочке: корневые серверы → серверы зоны .ru → авторитетный сервер домена.</p></li></ul></section><section class="block"><h2>Документация</h2><ul class="links"><li><a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_domain_name" rel="noopener" target="_blank">MDN: Что такое DNS ↗</a></li></ul></section><div class="prep-links"><span>Есть в картах:</span> <a class="chip" href="/roadmap/backend/">Backend-разработчик</a> <a class="chip" href="/roadmap/frontend/">Frontend-разработчик</a></div>
+  <nav class="rm-pager"><a href="/roadmap/backend/networking/">← TCP, UDP и TLS</a><a class="next" href="/roadmap/backend/language/">Язык программирования →</a></nav>
+  <p class="rm-back"><a href="/roadmap/backend/#cs">← Вся карта «Backend-разработчик»</a></p>
 </div></section>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"DNS","description":"Система, которая превращает имя сайта в IP-адрес, — записи, кэширование, TTL и типичные проблемы.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/common/dns/","publisher":{"@type":"Organization","name":"sotto"}}</script>
 

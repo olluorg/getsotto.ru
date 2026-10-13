@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Очереди, pub/sub и гарантии доставки — карта «Backend-разработчик»</title>
+<meta name="description" content="Модели доставки, at-most-once и at-least-once, идемпотентная обработка, повторы и DLQ.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/backend/messaging-basics/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/roadmap/backend/messaging-basics/">
+<meta property="og:title" content="Очереди, pub/sub и гарантии доставки — карта «Backend-разработчик»">
+<meta property="og:description" content="Модели доставки, at-most-once и at-least-once, идемпотентная обработка, повторы и DLQ.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/roadmap/" class=on>Карты</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/backend/#messaging">Backend-разработчик</a> <span>/</span> <a href="/roadmap/backend/messaging/">Брокеры сообщений</a> <span>/</span> <span>Очереди, pub/sub и гарантии доставки</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Backend-разработчик","item":"https://getsotto.ru/roadmap/backend/#messaging"},{"@type":"ListItem","position":3,"name":"Брокеры сообщений","item":"https://getsotto.ru/roadmap/backend/messaging/"},{"@type":"ListItem","position":4,"name":"Очереди, pub/sub и гарантии доставки"}]}</script>
+  <h1>Очереди, pub/sub и гарантии доставки</h1>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-junior">с Junior</span></div>
+  <p class="lead">Модели доставки, at-most-once и at-least-once, идемпотентная обработка, повторы и DLQ.</p>
+  <article class="md"><h3>Что важно знать</h3>
+<ul><li><b>Очередь</b>: сообщение получает один потребитель. <b>Pub/sub</b>: каждый подписчик получает копию.</li><li><b>At-most-once</b> — может потеряться; <b>at-least-once</b> — может прийти дважды; <b>exactly-once</b> — дорого и только в пределах системы.</li><li><b>Идемпотентность</b> обработчика — ключ: таблица обработанных идентификаторов, upsert, проверка состояния.</li><li><b>Повторы</b> с паузой и <b>DLQ</b> для сообщений, которые не обрабатываются.</li><li><b>Событие</b> («заказ создан») против <b>команды</b> («отправь письмо»).</li></ul></article>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Junior <small>≈ 4 ч</small></h3><ul><li>Объясняет разницу очереди и pub/sub и зачем сервисам брокер</li></ul><p class="rm-practice"><b>Практика.</b> Связать два сервиса через очередь — один публикует заказы, второй их обрабатывает.</p></div><div class="rm-grade"><h3>Middle <small>≈ 8 ч</small></h3><ul><li>Объясняет гарантии доставки и делает обработчик идемпотентным</li><li>Настраивает повторы с паузой и очередь «мёртвых» сообщений</li><li>Проектирует события и команды с версионированием схемы</li></ul><p class="rm-practice"><b>Практика.</b> Сделать обработчик, устойчивый к дубликатам и падениям, с повторами и DLQ, и проверить, убивая его посреди обработки.</p></div></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/brokers/message-broker/">Что такое message broker и зачем он нужен?</a> <span class="lvl lvl-junior">Junior</span><p>Брокер — посредник, который принимает сообщения от отправителей и доставляет получателям асинхронно: стороны не знают друг о друге и не обязаны работать одновременно.</p></li><li><a href="/questions/brokers/at-least-once-consumer/">Как на стороне consumer-а добиться доставки at-least-once и почему при этом появляются дубли?</a> <span class="lvl lvl-middle">Middle</span><p>Сначала обработать, потом зафиксировать offset (или подтвердить сообщение). Если упасть между обработкой и фиксацией, сообщение придёт снова — отсюда дубли, и обработка должна…</p></li><li><a href="/questions/brokers/dead-letter-queue/">Что такое dead letter queue (DLQ) и зачем она нужна?</a> <span class="lvl lvl-senior">Senior</span><p>DLQ — отдельная очередь или топик, куда уходит сообщение после N неудачных попыток, чтобы не блокировать поток и не потеряться.</p></li><li><a href="/questions/brokers/pubsub-vs-queue/">Чем модель pub/sub отличается от point-to-point (очередь)?</a> <span class="lvl lvl-junior">Junior</span><p>Pub/sub — каждое сообщение получает каждый подписчик (рассылка события). Point-to-point (очередь) — каждое сообщение получает один из конкурирующих потребителей (распределение…</p></li><li><a href="/questions/brokers/idempotent-consumer/">Как сделать consumer идемпотентным при семантике at-least-once?</a> <span class="lvl lvl-middle">Middle</span><p>Дубли неизбежны при at-least-once, поэтому обработчик делает повтор безвредным: проверка id сообщения в таблице обработанных в той же транзакции, что и эффект, или естественно…</p></li><li><a href="/questions/brokers/non-blocking-retries/">Чем неблокирующий повтор через отдельные retry-топики лучше повтора прямо в обработчике?</a> <span class="lvl lvl-senior">Senior</span><p>Блокирующий повтор в обработчике держит партицию: одно проблемное сообщение задерживает все следующие. Retry-топики уносят сообщение на повтор с задержкой, а партиция продолжает…</p></li></ul></section><section class="block"><h2>Разборы темы</h2><ul class="links"><li><a href="/learn/brokers/dlq-retries/">Retries, DLQ и идемпотентность</a><p>Что повторять и почему не всё, backoff/jitter, non-blocking retry, дизайн DLQ и redrive, идемпотентность как фундамент.</p></li><li><a href="/learn/brokers/message-design/">Проектирование событий и команд</a><p>Event vs command, обязательные поля envelope, idempotency key, schema evolution, thick vs thin payload и transactional outbox.</p></li><li><a href="/learn/brokers/messaging-basics/">Очереди, pub/sub и гарантии доставки</a><p>Зачем брокер сообщений, queue против pub/sub, три семантики доставки, роль идемпотентности и компромисс порядок/масштаб.</p></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/backend/messaging/">← Брокеры сообщений</a><a class="next" href="/roadmap/backend/kafka/">Kafka →</a></nav>
+  <p class="rm-back"><a href="/roadmap/backend/#messaging">← Вся карта «Backend-разработчик»</a></p>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Очереди, pub/sub и гарантии доставки","description":"Модели доставки, at-most-once и at-least-once, идемпотентная обработка, повторы и DLQ.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/backend/messaging-basics/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>

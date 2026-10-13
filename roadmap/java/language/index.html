@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Примитивы, строки и методы — карта «Java»</title>
+<meta name="description" content="Примитивы и обёртки, кэш Integer, строки и StringBuilder, передача по значению, порядок инициализации.">
+<link rel="canonical" href="https://getsotto.ru/roadmap/java/language/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/roadmap/java/language/">
+<meta property="og:title" content="Примитивы, строки и методы — карта «Java»">
+<meta property="og:description" content="Примитивы и обёртки, кэш Integer, строки и StringBuilder, передача по значению, порядок инициализации.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/questions/">Банк вопросов</a><a href="/roadmap/" class=on>Карты</a><a href="/#faq">Вопросы</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+<link rel="stylesheet" href="/assets/bank.css">
+<section class="bank card-page article"><div class="wrap narrow">
+  <nav class="crumbs"><a href="/roadmap/">Карты развития</a> <span>/</span> <a href="/roadmap/backend/">Backend-разработчик</a> <span>/</span> <a href="/roadmap/java/#basics">Java</a> <span>/</span> <a href="/roadmap/java/basics/">Основы языка</a> <span>/</span> <span>Примитивы, строки и методы</span></nav><script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Карты развития","item":"https://getsotto.ru/roadmap/"},{"@type":"ListItem","position":2,"name":"Backend-разработчик","item":"https://getsotto.ru/roadmap/backend/"},{"@type":"ListItem","position":3,"name":"Java","item":"https://getsotto.ru/roadmap/java/#basics"},{"@type":"ListItem","position":4,"name":"Основы языка","item":"https://getsotto.ru/roadmap/java/basics/"},{"@type":"ListItem","position":5,"name":"Примитивы, строки и методы"}]}</script>
+  <h1>Примитивы, строки и методы</h1>
+  <div class="chips"><span class="rm-kind k-core">Основа</span> <span class="lvl lvl-junior">с Junior</span></div>
+  <p class="lead">Примитивы и обёртки, кэш Integer, строки и StringBuilder, передача по значению, порядок инициализации.</p>
+  <article class="md"><div class="widget-in"><script type="module" src="/widgets/integer-cache.js"></script><sotto-integer-cache theme="dark"></sotto-integer-cache></div>
+<h3>Что важно знать</h3>
+<ul><li>Восемь примитивов и обёртки; <code>Integer</code> кэширует значения от −128 до 127 — отсюда «иногда работает» <code>==</code>.</li><li>Строки неизменяемы; конкатенация в цикле — <code>StringBuilder</code>.</li><li>Передача по значению: метод получает копию ссылки и не может подменить объект у вызывающего.</li><li><code>final</code>, <code>static</code>, порядок инициализации классов и объектов.</li></ul></article>
+  <section class="block rm-plan"><h2>Критерии освоения</h2><div class="rm-grade"><h3>Junior <small>≈ 10 ч</small></h3><ul><li>Объясняет разницу примитивов и обёрток, автоупаковку и ловушку == с Integer</li><li>Объясняет неизменяемость строк, пул строк и когда нужен StringBuilder</li><li>Объясняет, что Java всегда передаёт аргументы по значению, включая ссылки</li><li>Описывает порядок инициализации полей, static-блоков и конструкторов</li></ul><p class="rm-practice"><b>Практика.</b> Решить 20 задач «что выведет код» на примитивы, строки, передачу параметров и инициализацию, объяснив каждую.</p></div></section><section class="block"><h2>Вопросы с собеседований</h2><ul class="links"><li><a href="/questions/java/string-equals-vs-double-equals/">Что вернут сравнения для new String(&quot;a&quot;) и new String(&quot;a&quot;) через == и через equals()?</a> <span class="lvl lvl-junior">Junior</span><p>== даст false, equals() — true: == сравнивает ссылки, equals() у String — содержимое.</p></li><li><a href="/questions/java/string-immutable/">Почему String в Java неизменяемый?</a> <span class="lvl lvl-middle">Middle</span><p>Неизменяемость String даёт пул строк (литералы разделяются безопасно), кэш hashCode (строка — идеальный ключ HashMap), потокобезопасность без синхронизации и безопасность…</p></li><li><a href="/questions/java/compile-time-constant-inlining/">Библиотека объявляет public static final String VERSION = &quot;1.0&quot;. В новой версии значение изменили на &quot;2.0&quot; и заменили только jar библиотеки. Что увидит уже скомпилированное приложение?</a> <span class="lvl lvl-senior">Senior</span><p>Старое &quot;1.0&quot;: static final примитив или строка с константным инициализатором — константа времени компиляции, её значение вписано прямо в байт-код потребителя. Без перекомпиляции…</p></li><li><a href="/questions/java/integer-cache/">Integer a=127, b=127, c=128, d=128. Что вернут a==b и c==d?</a> <span class="lvl lvl-junior">Junior</span><p>a==b → true, c==d → false: Integer.valueOf() кэширует значения от −128 до 127.</p></li><li><a href="/questions/java/ternary-unboxing-npe/">Почему int v = flag ? map.get(key) : 0 (map.get может вернуть null) способно бросить NPE?</a> <span class="lvl lvl-middle">Middle</span><p>Если одна ветвь тернарного оператора int, а другая Integer, тип всего выражения — int: обёрточная ветвь распаковывается, и null даёт NPE, хотя код выглядит безопасным.</p></li><li><a href="/questions/java/final-reference/">Что означает final для переменной-ссылки?</a> <span class="lvl lvl-junior">Junior</span><p>final у ссылки запрещает переприсваивание, но объект по ней менять можно.</p></li></ul></section><section class="block"><h2>Разборы темы</h2><ul class="links"><li><a href="/learn/java/initialization/">final, static и порядок инициализации</a><p>Семантика final (и почему это не immutable), static-члены, порядок инициализации класса и объекта, константы и ловушки.</p></li><li><a href="/learn/java/method-semantics/">Методы: pass-by-value, перегрузка, varargs</a><p>Почему Java всегда pass-by-value, разрешение перегрузки на этапе компиляции и устройство varargs.</p></li><li><a href="/learn/java/primitives/">Примитивы, обёртки и Integer cache</a><p>Восемь примитивов и их диапазоны, autoboxing, кэш Integer и ловушка ==, NPE при распаковке и цена боксинга.</p></li><li><a href="/learn/java/strings/">Строки: неизменяемость, пул и StringBuilder</a><p>Почему String immutable, String pool и intern, конкатенация и StringBuilder, char/code points и compact strings.</p></li></ul></section>
+  <nav class="rm-pager"><a href="/roadmap/java/basics/">← Основы языка</a><a class="next" href="/roadmap/java/oop/">ООП, интерфейсы и неизменяемость →</a></nav>
+  <p class="rm-back"><a href="/roadmap/java/#basics">← Вся карта «Java»</a></p>
+</div></section>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Примитивы, строки и методы","description":"Примитивы и обёртки, кэш Integer, строки и StringBuilder, передача по значению, порядок инициализации.","inLanguage":"ru","mainEntityOfPage":"https://getsotto.ru/roadmap/java/language/","publisher":{"@type":"Organization","name":"sotto"}}</script>
+
+<section id="access" class="access">
+  <div class="wrap">
+    <div class="card">
+      <div class="text">
+        <span class="kicker">Закрытая бета</span>
+        <h2>Знать тему — половина дела</h2>
+        <p class="lead">На живом собеседовании sotto слышит вопрос интервьюера и показывает короткий ответ и план. Оставьте контакт — пришлём доступ и промокод.</p>
+        <ul class="ticks">
+          <li><b>Промокод на 2 часа</b> — сверх пробных 30 минут</li>
+          <li data-os="windows"><b>Программа для Windows</b> — <a href="/download/sotto-setup-x64.exe" data-where="access" download>скачать сразу</a>, войти — через Яндекс ID или VK ID</li>
+          <li data-os="other" hidden><b>Первыми узнаете о версии для <span data-os-name>Mac</span></b> — пока sotto только для Windows</li>
+          <li><b>Прямая связь</b> с разработчиком: что улучшить — сделаем</li>
+        </ul>
+      </div>
+      <form data-lead novalidate class="ym-disable-keys">
+        <label>Почта или Telegram<input class="ym-hide-content ym-disable-keys" name="contact" autocomplete="email" placeholder="you@mail.ru или @username" required maxlength="120"></label>
+        <label>Как к вам обращаться<input class="ym-hide-content ym-disable-keys" name="name" autocomplete="given-name" placeholder="необязательно" maxlength="80"></label>
+        <label>Для чего нужен sotto<select name="scenario"><option value="lectures">Лекции и выступления</option><option value="calls">Звонки и продажи</option><option value="interviews" selected>Собеседования</option><option value="other">Другое</option></select></label>
+        <label>Ваш компьютер<select name="os"><option value="windows">Windows</option><option value="mac">Mac</option><option value="linux">Linux</option></select></label>
+        <label>Комментарий<textarea class="ym-hide-content ym-disable-keys" name="comment" placeholder="Например: читаю лекции по экономике, вопросы приходят в чат" maxlength="1000"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="consent"><input type="checkbox" name="consent" value="1" required><span>Согласен на <a href="/consent/" target="_blank">обработку персональных данных</a> по <a href="/privacy/" target="_blank">политике</a></span></label>
+        <button class="btn primary" type="submit">Получить доступ</button>
+        <div class="form-status" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>
