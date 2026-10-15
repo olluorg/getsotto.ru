@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Алгоритмическая секция и секция на кодинг: какие задачи дают и как их решать вслух</title>
+<meta name="description" content="Темы и классические задачи — от двух сумм до слияния интервалов, план часа на секции, практические задачи вроде LRU-кэша и пула воркеров и тренажёр с таймером.">
+<link rel="canonical" href="https://getsotto.ru/blog/algoritmicheskaya-sekciya/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="sotto">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:url" content="https://getsotto.ru/blog/algoritmicheskaya-sekciya/">
+<meta property="og:title" content="Алгоритмическая секция и секция на кодинг: какие задачи дают и как их решать вслух">
+<meta property="og:description" content="Темы и классические задачи — от двух сумм до слияния интервалов, план часа на секции, практические задачи вроде LRU-кэша и пула воркеров и тренажёр с таймером.">
+<meta property="og:image" content="https://getsotto.ru/img/lecture.webp">
+
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>window.SOTTO = { leadUrl: "https://api.getsotto.ru/api/lead", metrika: 113573527, contact: "s_knyazev@vk.com" };</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=113573527', 'ym');
+
+    ym(113573527, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<!-- /Yandex.Metrika counter -->
+</head>
+<body>
+<noscript><div><img src="https://mc.yandex.ru/watch/113573527" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<header class="top"><div class="wrap">
+  <a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a>
+  <nav class="nav"><a href="/lectures/">Лекции</a><a href="/calls/">Звонки</a><a href="/interviews/">Собеседования</a><a href="/#pricing">Тарифы</a><a href="/#faq">Вопросы</a><a href="/guide/">Обучение</a><a href="/blog/">Блог</a></nav>
+  <a class="signin" href="https://my.getsotto.ru/">Войти</a>
+  <a class="btn primary small" href="#access" data-where="header">Получить доступ</a>
+</div></header>
+<main>
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Алгоритмическая секция и секция на кодинг: какие задачи дают и как их решать вслух", "description": "Темы и классические задачи — от двух сумм до слияния интервалов, план часа на секции, практические задачи вроде LRU-кэша и пула воркеров и тренажёр с таймером.", "datePublished": "2026-10-16", "dateModified": "2026-10-16", "inLanguage": "ru", "mainEntityOfPage": "https://getsotto.ru/blog/algoritmicheskaya-sekciya/", "publisher": {"@type": "Organization", "name": "sotto", "url": "https://getsotto.ru/"}}</script>
+<section><div class="wrap doc post">
+  <a class="kicker" href="/blog/#sobesedovaniya">Собеседования · 12 мин</a><h1 style="font-size:40px;margin-top:10px">Алгоритмическая секция и секция на кодинг: какие задачи дают и как их решать вслух</h1>
+  <div class="post-meta"><p class="edition">16 октября 2026</p><button type="button" class="btn ghost small share-open" data-url="https://getsotto.ru/blog/algoritmicheskaya-sekciya/" data-title="Алгоритмическая секция и секция на кодинг: какие задачи дают и как их решать вслух"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться</button></div>
+  <p class="lead">Темы и классические задачи — от двух сумм до слияния интервалов, план часа на секции, практические задачи вроде LRU-кэша и пула воркеров и тренажёр с таймером.</p>
+  
+<p>Почти в любой крупной IT-компании технических секций две разновидности. <b>Алгоритмическая</b> — абстрактная задача на структуры данных, где важны идея и сложность. <b>Секция на кодинг</b> — практическая задача, похожая на работу: классы, тесты, обработка ошибок, иногда многопоточность. Готовиться к ним нужно по-разному. Ниже — как обе проходят в Яндексе, Т-Банке, Сбере, Авито и VK, какие задачи встречаются чаще всего и как вести себя на секции.</p>
+
+<h2>Алгоритмическая секция: что это</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Компания</th><th>Формат</th></tr></thead>
+<tbody>
+<tr><td><b><a href="/blog/sobesedovanie-yandex/">Яндекс</a></b></td><td>«Проверка базовых технических навыков»: две задачи за час в онлайн-редакторе, независимо от языка. Нужно обосновать выбор методов и их стоимость.</td></tr>
+<tr><td><b><a href="/blog/sobesedovanie-t-bank/">Т-Банк</a></b></td><td>Отдельная секция на 60 минут: абстрактные задачи, оценка сложности, ясный код.</td></tr>
+<tr><td><b><a href="/blog/sobesedovaniya-v-bigteh/#vk">VK</a></b></td><td>30 минут алгоритмов в связке с 30 минутами технических вопросов.</td></tr>
+<tr><td><b><a href="/blog/sobesedovanie-avito/">Авито</a></b></td><td>Секция «Программирование»: 1–2 задачи в онлайн-редакторе, можно писать на псевдокоде и пользоваться библиотечными функциями.</td></tr>
+<tr><td><b><a href="/blog/sobesedovanie-sber/">Сбер</a></b></td><td>Задача уровня easy или ревью кода на техническом интервью; лайвкодинг 15–30 минут.</td></tr>
+</tbody>
+</table></div>
+<p>Общее у всех: уровень — <b>easy и medium</b> по классификации LeetCode, олимпиадные задачи не нужны. Код обычно пишут без запуска и без подсказок IDE, поэтому проверять его придётся головой — прогоном на примере.</p>
+
+<h2>Какие темы спрашивают</h2>
+<p>Яндекс прямо перечисляет теги, по которым стоит тренироваться: массивы, строки, деревья, бинарный поиск, хеш-таблицы, обход в глубину и в ширину, два указателя, стек, перебор с возвратом. У Т-Банка список почти тот же: строки, списки, деревья, ассоциативные массивы, поиск в коллекциях, обход деревьев, сортировки, динамическое программирование и О-нотация. Отсюда карта тем:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Тема</th><th>Приём</th><th>Классические задачи</th><th>Разобраться</th></tr></thead>
+<tbody>
+<tr><td><b>Хеш-таблицы</b></td><td>посчитать, найти пару, сгруппировать за O(n)</td><td><a href="https://leetcode.com/problems/two-sum/">Две суммы</a>, <a href="https://leetcode.com/problems/group-anagrams/">анаграммы</a></td><td><a href="https://acody.ru/questions/cs/hash-table/">хеш-таблица</a></td></tr>
+<tr><td><b>Два указателя</b></td><td>отсортированный массив, сжатие на месте</td><td><a href="https://leetcode.com/problems/container-with-most-water/">контейнер с водой</a>, <a href="https://leetcode.com/problems/move-zeroes/">переместить нули</a></td><td></td></tr>
+<tr><td><b>Скользящее окно</b></td><td>подстрока или подмассив с условием</td><td><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/">подстрока без повторов</a></td><td></td></tr>
+<tr><td><b>Интервалы</b></td><td>сортировка по началу + один проход</td><td><a href="https://leetcode.com/problems/merge-intervals/">слияние интервалов</a>, <a href="https://leetcode.com/problems/interval-list-intersections/">пересечение</a></td><td><a href="https://acody.ru/questions/cs/sorting-overview/">сортировки</a></td></tr>
+<tr><td><b>Стек</b></td><td>парность, «ближайший больший»</td><td><a href="https://leetcode.com/problems/valid-parentheses/">скобки</a>, <a href="https://leetcode.com/problems/min-stack/">стек с минимумом</a></td><td></td></tr>
+<tr><td><b>Бинарный поиск</b></td><td>отсортированные данные, поиск границы</td><td><a href="https://leetcode.com/problems/binary-search/">бинарный поиск</a></td><td><a href="https://acody.ru/questions/cs/binary-search/">бинарный поиск</a></td></tr>
+<tr><td><b>Деревья</b></td><td>рекурсия, обход, границы значений</td><td><a href="https://leetcode.com/problems/validate-binary-search-tree/">проверить BST</a>, <a href="https://leetcode.com/problems/binary-tree-level-order-traversal/">обход по уровням</a></td><td><a href="https://acody.ru/questions/cs/binary-search-tree/">дерево поиска</a></td></tr>
+<tr><td><b>Графы</b></td><td>BFS/DFS, посещённые вершины</td><td><a href="https://leetcode.com/problems/number-of-islands/">острова</a>, <a href="https://leetcode.com/problems/course-schedule/">расписание курсов</a></td><td><a href="https://acody.ru/questions/cs/bfs-dfs/">обход в ширину и глубину</a></td></tr>
+<tr><td><b>Куча</b></td><td>top-K, слияние потоков</td><td><a href="https://leetcode.com/problems/top-k-frequent-elements/">топ-K частых</a></td><td><a href="https://acody.ru/questions/cs/heap-priority-queue/">куча</a></td></tr>
+<tr><td><b>Динамика</b></td><td>ответ из ответов на меньшие задачи</td><td><a href="https://leetcode.com/problems/climbing-stairs/">лестница</a></td><td><a href="https://acody.ru/questions/cs/dynamic-programming/">динамическое программирование</a></td></tr>
+</tbody>
+</table></div>
+<p>На страницах Acody в правой колонке — интерактивные модели: можно пошагово посмотреть, как работают хеш-таблица, бинарный поиск, обход графа или куча. И везде пригодится оценка сложности: <a href="https://acody.ru/questions/cs/big-o/">что такое O-нотация</a>.</p>
+
+<h2>Пример: слияние интервалов</h2>
+<p>Одна из самых узнаваемых задач: дан список отрезков <code>[[1,3],[2,6],[8,10],[15,18]]</code>, нужно слить пересекающиеся — получится <code>[[1,6],[8,10],[15,18]]</code>. На ней хорошо видно, как выглядит хороший ответ на секции.</p>
+<ol>
+<li><b>Уточнить.</b> Отрезки отсортированы? Касание <code>[1,2]</code> и <code>[2,3]</code> — это пересечение? Может ли список быть пустым? Можно ли менять входной список?</li>
+<li><b>Идея.</b> Если отсортировать отрезки по началу, пересекающиеся окажутся рядом. Дальше один проход: если начало следующего не больше конца текущего — расширяем конец, иначе начинаем новый отрезок.</li>
+<li><b>Сложность.</b> Сортировка — O(n log n), проход — O(n); память — O(n) на ответ.</li>
+<li><b>Код и прогон.</b> Пишем и проверяем руками на примере и на крайних случаях.</li>
+</ol>
+<pre><code>def merge(intervals: list[list[int]]) -&gt; list[list[int]]:
+    result = []
+    for start, end in sorted(intervals):
+        if result and start &lt;= result[-1][1]:
+            result[-1][1] = max(result[-1][1], end)   # пересекается — расширяем
+        else:
+            result.append([start, end])              # новый отрезок
+    return result</code></pre>
+<p>Частая ошибка — написать <code>result[-1][1] = end</code> вместо <code>max(...)</code>: тогда на <code>[[1,10],[2,3]]</code> отрезок «сожмётся» до <code>[1,3]</code>. Именно такие места интервьюер ждёт, что вы найдёте сами при прогоне. Родственные задачи — <a href="https://leetcode.com/problems/insert-interval/">вставка интервала</a>, <a href="https://leetcode.com/problems/non-overlapping-intervals/">непересекающиеся интервалы</a>, <a href="https://leetcode.com/problems/summary-ranges/">диапазоны в массиве</a>.</p>
+
+<h2>Как вести себя на секции</h2>
+<figure class="chart"><figcaption>Как распределить час алгоритмической секции</figcaption><div class="tl" role="img" aria-label="Как распределить час алгоритмической секции"><div class="tl-seg" style="flex:5;background:#6f789a" title="Уточнить условие: 5 мин — входные данные, ограничения, крайние случаи, пара примеров"><span>5</span></div><div class="tl-seg" style="flex:10;background:#9676ff" title="Идея и сложность: 10 мин — наивное решение, потом лучше; оценка по времени и памяти — до кода"><span>10</span></div><div class="tl-seg" style="flex:25;background:#5ad1c0" title="Код: 25 мин — проговаривая шаги; понятные имена, без лишних оптимизаций"><span>25</span></div><div class="tl-seg" style="flex:10;background:#ffb38a" title="Проверка: 10 мин — прогон на примере вручную, крайние случаи, исправления"><span>10</span></div><div class="tl-seg" style="flex:10;background:#6f789a" title="Вторая задача или усложнение: 10 мин — часто дают вторую задачу или новую версию первой"><span>10</span></div></div><div class="tl-scale"><span>0</span><span>60 мин</span></div><ul class="tl-legend"><li><i style="background:#6f789a"></i><b>Уточнить условие</b> · 5 мин<br><small>входные данные, ограничения, крайние случаи, пара примеров</small></li><li><i style="background:#9676ff"></i><b>Идея и сложность</b> · 10 мин<br><small>наивное решение, потом лучше; оценка по времени и памяти — до кода</small></li><li><i style="background:#5ad1c0"></i><b>Код</b> · 25 мин<br><small>проговаривая шаги; понятные имена, без лишних оптимизаций</small></li><li><i style="background:#ffb38a"></i><b>Проверка</b> · 10 мин<br><small>прогон на примере вручную, крайние случаи, исправления</small></li><li><i style="background:#6f789a"></i><b>Вторая задача или усложнение</b> · 10 мин<br><small>часто дают вторую задачу или новую версию первой</small></li></ul><p class="chart-source">Ориентир, а не правило: на секциях с двумя задачами каждую стоит укладывать в 25–30 минут.</p></figure>
+<ul>
+<li><b>Не начинайте с кода.</b> Пять минут на вопросы по условию почти никогда не бывают лишними: кандидат, рассказавший на Хабре о собеседованиях в Яндекс и VK, называет пропущенные уточнения своей главной ошибкой.</li>
+<li><b>Сначала наивное решение, потом лучше.</b> Скажите вслух решение «в лоб» и его сложность, затем улучшайте. Это показывает ход мысли и страхует, если оптимальное не придёт.</li>
+<li><b>Думайте вслух.</b> Об этом прямо просят Яндекс, Сбер и Авито: оценивают не только ответ, но и путь к нему. Молча написанный верный код оценят ниже.</li>
+<li><b>Принимайте подсказки.</b> Подсказка интервьюера — не провал, а приглашение к диалогу. Сбер прямо пишет, что эксперты помогают, если кандидат ушёл не туда.</li>
+<li><b>Проверьте крайние случаи:</b> пустой ввод, один элемент, дубликаты, отрицательные числа, всё одинаковое, уже отсортированное, переполнение.</li>
+</ul>
+
+<h2>Секция на кодинг: практическая задача</h2>
+<p>Здесь проверяют не знание алгоритмов, а то, как вы пишете рабочий код: интерфейсы, структуры данных, обработку ошибок, тесты, иногда конкурентность. Что обещают компании:</p>
+<ul>
+<li><b>Яндекс</b> — 1,5 часа, задача, близкая к повседневной работе: написать код с нуля или доработать существующий. Java и Python — в своей IDE с демонстрацией экрана (для Java — обычно несколько классов и unit-тесты; для Python — автотесты на pytest, фича, оптимизация или исправление ошибок). Go — в онлайн-редакторе: горутины, пакет sync, каналы. Если останется время, дадут усложнение.</li>
+<li><b>Т-Банк</b> — секция по языку и платформе: ревью кода и доработка под бизнес-задачу, разбор сценария сбоя, исправление многопоточного кода, задача на SQL. Для Go — асинхронная задача и примитивы языка.</li>
+<li><b>Сбер</b> — ревью кода или небольшая задача на техническом интервью.</li>
+<li><b>VK</b> — секция на кодинг в формате, похожем на яндексовский.</li>
+</ul>
+<p>Типичные задачи такой секции, которые полезно уметь написать с тестами за час:</p>
+<ul>
+<li><b>LRU-кэш</b> с ограничением по размеру — словарь плюс двусвязный список (<a href="https://leetcode.com/problems/lru-cache/">условие</a>).</li>
+<li><b>Хранилище «ключ — значение» с TTL</b>: запись, чтение, истечение срока, очистка.</li>
+<li><b>Ограничитель запросов</b> (rate limiter): token bucket или скользящее окно — <a href="https://acody.ru/prep/highload/">подборка по highload</a>.</li>
+<li><b>Пул воркеров</b> с ограничением числа одновременных задач и корректным завершением — для Go и Java.</li>
+<li><b>Параллельный обход</b>: например, обойти ссылки сайта не больше чем в N потоков и правильно понять, когда работа закончилась. Похожую задачу описывает кандидат на Хабре по собеседованию в Яндекс.</li>
+<li><b>Небольшой сервис в памяти</b> с несколькими методами: добавить запись, обновить, получить топ — с обсуждением, как он поведёт себя на больших данных.</li>
+</ul>
+<p>Что подготовить заранее:</p>
+<ul>
+<li>Пустой проект в IDE, где собираются и запускаются тесты (JUnit, pytest, go test) — Яндекс советует это прямо.</li>
+<li>Привычка писать тест сразу после первой рабочей версии, а не в конце.</li>
+<li>Уверенное знание стандартной библиотеки своего языка: коллекции, работа со временем, потоки и примитивы синхронизации.</li>
+<li>Выключенные AI-подсказки в IDE: на секциях Яндекса, Сбера и VK они запрещены, а Т-Банк пишет, что их использование заметно.</li>
+</ul>
+
+<h2>Тренажёр: случайная задача и таймер</h2>
+<p>Получите задачу, нажмите «Старт» и решайте вслух — на бумаге или в редакторе без автодополнения. Таймер подскажет, чем заняться на каждом отрезке. Лучше всего — с другом в роли интервьюера.</p>
+<div id="trainer" class="trainer"><noscript><p>Тренажёру нужен JavaScript.</p></noscript></div>
+<script src="/assets/trainer.js" defer></script>
+
+<h2>Где тренироваться</h2>
+<ul>
+<li><a href="https://leetcode.com/">LeetCode</a> — задачи easy и medium по тегам из таблицы выше; этот совет дают и Яндекс, и Сбер, и Авито.</li>
+<li><a href="https://coderun.yandex.ru/">CodeRun</a> — тренажёр Яндекса с задачами в формате их собеседований.</li>
+<li><a href="https://yandex.ru/jobs/interview/algorithms/">«Как пройти алгоритмическое собеседование в Яндекс»</a> — гайд от самого Яндекса.</li>
+<li><a href="https://acody.ru/prep/cs-basics/">Основы computer science на Acody</a> — теория к собеседованию с короткими ответами и разбором частых ошибок.</li>
+</ul>
+
+<div class="feature" style="margin:24px 0">
+<h3>Решать вслух — отдельный навык</h3>
+<p>Задачи можно решать в одиночку, а объяснять решение — только собеседнику. Проведите пробную секцию с другом: он читает условие и задаёт вопросы, вы решаете вслух. sotto распознает разговор и после звонка разберёт, где объяснение было ясным, а где вы поплыли.</p>
+<p><a class="btn primary small" href="/guide/review/">Как устроен разбор</a></p>
+</div>
+
+<p>Как устроены собеседования целиком — в обзоре <a href="/blog/sobesedovaniya-v-bigteh/">«Как проходят собеседования в Яндекс, Т-Банк, Сбер, Авито, VK и Ozon»</a>. В каких программах их проводят — в статье <a href="/blog/programmy-dlya-sobesedovanij/">о Телемосте, SaluteJazz и других сервисах</a>.</p>
+
+<details class="sources"><summary>Источники и дата проверки</summary>
+<p>Проверено 16 октября 2026.</p>
+<ul>
+<li>Яндекс: <a href="https://yandex.ru/jobs/interview/backend">«Как мы нанимаем бэкенд-разработчиков»</a> — секция на кодинг по языкам, проверка базовых навыков, теги для тренировки, запрет AI-ассистентов.</li>
+<li>Т-Банк: страницы интервью по <a href="https://www.tbank.ru/career/it/interview/java/">Java</a>, <a href="https://www.tbank.ru/career/it/interview/go/">Go</a>, <a href="https://www.tbank.ru/career/it/interview/python/">Python</a> — секции по языку и алгоритмам, темы.</li>
+<li>Сбер: <a href="https://developers.sber.ru/kak-v-sbere/interview/java-developer">подготовка Java-разработчика</a>, <a href="https://rabota.sber.ru/media/kak-prohodyat-tekhnicheskie-sobesedovaniya-v-sbere/">«Как проходят технические собеседования в Сбере»</a>.</li>
+<li>Авито: <a href="https://career.avito.com/directions/developer/">этапы отбора в Авито Tech</a>.</li>
+<li>VK: по опыту кандидатов на бэкенд-позиции в 2026 году.</li>
+<li>Рассказ кандидата: <a href="https://habr.com/ru/articles/1006022/">«Собеседования в Яндекс и ВК (бэкенд, февраль 2026)»</a> на Хабре.</li>
+</ul>
+</details>
+
+  <div class="more-section"><h2>Ещё в разделе «Собеседования»</h2><div class="features"><a class="feature" href="/blog/system-design-dlya-nachinayushchih/"><h3>System design для начинающих: как проходит секция, план на час и калькулятор нагрузки</h3><p>9 мин</p></a><a class="feature" href="/blog/povedencheskie-voprosy/"><h3>HR-собеседование и поведенческие вопросы: метод STAR и 20 вопросов, к которым стоит подготовить истории</h3><p>9 мин</p></a><a class="feature" href="/blog/voprosy-interviyueru/"><h3>Что спросить у интервьюера в конце собеседования: список вопросов, из которого можно выбрать свои</h3><p>5 мин</p></a></div><p><a href="/blog/#sobesedovaniya">Все статьи раздела →</a></p></div>
+  <div class="post-end"><a class="btn ghost small" href="/blog/">← Все статьи</a><button type="button" class="btn ghost small share-open" data-url="https://getsotto.ru/blog/algoritmicheskaya-sekciya/" data-title="Алгоритмическая секция и секция на кодинг: какие задачи дают и как их решать вслух"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>Поделиться</button></div>
+</div></section>
+<script src="/assets/share.js" defer></script>
+</main>
+<footer><div class="wrap">
+  <div><a class="logo" href="/"><img src="/img/logo.png" alt="" width="36" height="30">sotto</a><p style="margin-top:12px">Ассистент для живых разговоров: лекций, звонков и собеседований.</p>
+    <p style="margin-top:12px">Самозанятый Князев Сергей Алексеевич · ИНН 121528505494<br>Республика Марий Эл, г. Йошкар-Ола<br>© 2026 sotto</p></div>
+  <div><h4>Сценарии</h4><ul><li><a href="/lectures/">Лекции и выступления</a></li><li><a href="/calls/">Звонки и продажи</a></li><li><a href="/interviews/">Собеседования</a></li><li><a href="/guide/">Обучение</a></li><li><a href="/blog/">Блог</a></li></ul></div>
+  <div><h4>Документы и связь</h4><ul><li><a href="/contacts/">Реквизиты и контакты</a></li><li><a href="/offer/">Оферта</a></li><li><a href="/privacy/">Политика обработки данных</a></li><li><a href="/consent/">Согласие на обработку данных</a></li>
+    <li><a href="mailto:s_knyazev@vk.com">s_knyazev@vk.com</a></li>
+    <li><a href="https://t.me/getsotto_bot">Telegram-бот @getsotto_bot</a></li>
+    <li><a href="tel:+79648623399">+7 964 862-33-99</a></li></ul>
+    <p style="margin-top:12px">Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно.</p></div>
+</div></footer>
+<div class="cookie" hidden><p>Сайт использует cookie и Яндекс Метрику, чтобы понимать, что людям интересно. Подробнее — в <a href="/privacy/#metrika">политике</a>.</p><button class="btn small" type="button">Понятно</button></div>
+<script src="/assets/app.js" defer></script>
+</body>
+</html>
