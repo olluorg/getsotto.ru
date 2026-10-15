@@ -1,8 +1,8 @@
 {
- "version": "2.0.0-beta.4",
- "file": "sotto-2.0.0-beta.4-x64.exe.gz",
- "size": 16338988,
- "sha256": "8c453f9b2ca3195cc6d26141ccc69399a58eca3e33b331ec0ed8c38ac688bd91",
- "sig": "3WluW0glo0PizCIbdB8/3qkr+eVnXiGtpxTAjY4ijmTQzVEi0hlwxqG19AtH/WMYqbwTMfq2DdPwtTWn3rwjAw==",
+ "version": "2.0.0-beta.5",
+ "file": "sotto-2.0.0-beta.5-x64.exe.gz",
+ "size": 16339779,
+ "sha256": "cda8050a6349847bc62a69a968d1b5d33a0505920293f547b1813cb3a8e5cfb8",
+ "sig": "HAT/L+Xx6bbAEL3bnDLE2UFu2elcW23PuhQ7tCjP77RwxPZYMoLK+OuHxI0wuqNKEdPI8xtQqq6HG2jDPySaDA==",
  "rollout": 100
 }
