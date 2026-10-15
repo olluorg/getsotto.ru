@@ -150,6 +150,8 @@ section { padding: 96px 0; position: relative; }
 .feature .ico { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: rgba(150, 118, 255, .14); }
 .feature .ico svg { width: 24px; height: 24px; stroke: var(--accent-2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .feature p { color: var(--muted); font-size: 15.5px; }
+a.feature { color: var(--text); transition: border-color .15s; }
+a.feature:hover { border-color: var(--accent); text-decoration: none; }
 
 /* ---- тарифы ---- */
 .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch; }
